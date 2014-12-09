@@ -1,0 +1,538 @@
+-- $Id: z80syntax.bnf,v 1.11 2012/09/21 18:13:55 luis Exp $
+-- vim: ts=4 sw=4 ai nu
+-- Author: Luis Colorado <lc@luiscoloradosistemas.com>
+-- lun ago 20 14:31:18 CEST 2012
+-- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
+--             All rights reserved.
+
+%symbol NOT_EQ	= '!='		%symbol LESS_EQ = '<='
+%symbol GREATER_EQ = '>='
+
+-- A)
+%symbol A		= 'A'		%symbol ABS		= 'ABS'
+%symbol ADC		= 'ADC'		%symbol ADD		= 'ADD'
+%symbol AF		= 'AF'		%symbol ALIGN	= 'ALIGN'
+%symbol AND		= 'AND'
+
+-- B)
+%symbol B		= 'B'		%symbol BC		= 'BC'
+%symbol BIT		= 'BIT'		%symbol BYTE	= 'BYTE'
+
+-- C)
+%symbol C		= 'C'		%symbol CALL	= 'CALL'
+%symbol CCF		= 'CCF'		%symbol COMMON	= 'COMMON'
+%symbol CP		= 'CP'		%symbol CPD		= 'CPD'
+%symbol CPDR	= 'CPDR'	%symbol CPI		= 'CPI'
+%symbol CPIR	= 'CPIR'	%symbol CPL		= 'CPL'
+
+-- D)
+%symbol D		= 'D'		%symbol DAA		= 'DAA'
+%symbol DATA	= 'DATA'	%symbol DE		= 'DE'
+%symbol DEC		= 'DEC'		%symbol DI		= 'DI'
+%symbol DJNZ	= 'DJNZ'	%symbol DOUBLE	= 'DOUBLE'
+
+-- E)
+%symbol E		= 'E'		%symbol EI		= 'EI'
+%symbol ELSE	= 'ELSE'	%symbol ELSIF	= 'ELSIF'
+%symbol END		= 'END'		%symbol EQ		= 'EQ'
+%symbol EQU		= 'EQU'		%symbol EX		= 'EX'
+%symbol EXPORT	= 'EXPORT'	%symbol EXX		= 'EXX'
+
+-- F)
+%symbol FLOAT	= 'FLOAT'	%symbol FOOTER	= 'FOOTER'
+
+-- G)
+%symbol G		= 'G'		%symbol GE		= 'GE'
+%symbol GLOBAL	= 'GLOBAL'
+
+-- H)
+%symbol H		= 'H'		%symbol HALT	= 'HALT'
+%symbol HEADER	= 'HEADER'	%symbol HL		= 'HL'
+
+-- I)
+%symbol I		= 'I'		%symbol IF		= 'IF'
+%symbol IM0		= 'IM0'		%symbol IM1		= 'IM1'
+%symbol IM2		= 'IM2'		%symbol IMPORT	= 'IMPORT'
+%symbol IN		= 'IN'		%symbol INC		= 'INC'
+%symbol IND		= 'IND'		%symbol INDR	= 'INDR'
+%symbol INI		= 'INI'		%symbol INIR	= 'INIR'
+%symbol IX		= 'IX'		%symbol IY		= 'IY'
+
+-- J)
+%symbol JP		= 'JP'		%symbol JR		= 'JR'
+
+-- L)
+%symbol L		= 'L'		%symbol LD		= 'LD'
+%symbol LDD		= 'LDD'		%symbol LDDR	= 'LDDR'
+%symbol LDI		= 'LDI'		%symbol LDIR	= 'LDIR'
+%symbol LE		= 'LE'		%symbol LIST	= 'LIST'
+%symbol LOCAL	= 'LOCAL'
+
+-- M)
+%symbol M		= 'M'		%symbol MACRO	= 'MACRO'
+%symbol MOD		= 'MOD'		%symbol MODULE	= 'MODULE'
+
+-- N)
+%symbol NC		= 'NC'		%symbol NE		= 'NE'
+%symbol NEG		= 'NEG'		%symbol NOP		= 'NOP'
+%symbol NOT		= 'NOT'		%symbol NZ		= 'NZ'
+
+-- O)
+%symbol OR		= 'OR'		%symbol ORG		= 'ORG'
+%symbol OTDR	= 'OTDR'	%symbol OTIR	= 'OTIR'
+%symbol OUT		= 'OUT'		%symbol OUTD	= 'OUTD'
+%symbol OUTI	= 'OUTI'
+
+-- P)
+%symbol P		= 'P'		%symbol PAGE	= 'PAGE'
+%symbol PE		= 'PE'		%symbol PO		= 'PO'
+%symbol POP		= 'POP'		%symbol PUSH	= 'PUSH'
+
+-- R)
+%symbol R		= 'R'		%symbol RES		= 'RES'
+%symbol RET		= 'RET'		%symbol RETI	= 'RETI'
+%symbol RETN	= 'RETN'	%symbol RL		= 'RL'
+%symbol RLA		= 'RLA'		%symbol RLC		= 'RLC'
+%symbol RLCA	= 'RLCA'	%symbol RLD		= 'RLD'
+%symbol RR		= 'RR'		%symbol RRA		= 'RRA'
+%symbol RRC		= 'RRC'		%symbol RRCA	= 'RRCA'
+%symbol RRD		= 'RRD'		%symbol RST		= 'RST'
+
+-- S)
+%symbol SBC		= 'SBC'		%symbol SCF		= 'SCF'
+%symbol SEGMENT	= 'SEGMENT'	%symbol SET		= 'SET'
+%symbol SLA		= 'SLA'		%symbol SP		= 'SP'
+%symbol SRA		= 'SRA'		%symbol SRL		= 'SRL'
+%symbol STACK	= 'STACK'	%symbol SUB		= 'SUB'
+
+-- T)
+%symbol THEN	= 'THEN'	%symbol WORD	= 'WORD'
+
+-- X)
+%symbol XOR		= 'XOR'
+
+-- Z)
+%symbol Z		= 'Z'
+
+--========================================================================
+-- Global assemble is one module.
+
+z80grammar ::= { assemble_unit } ;
+
+assemble_unit ::=
+	  list_control_statement_list
+	  IDENT 'MODULE' eol
+		{ preamble_statement }
+		main_definition { main_definition }
+	  IDENT 'END' 'MODULE' [ expr ] eol
+	;
+
+preamble_statement ::=
+	  export_statement
+	| import_statement
+	;
+
+export_statement ::= 'EXPORT' ident_list eol;
+import_statement ::= 'IMPORT' ident_list eol;
+
+ident_list ::= IDENT { ',' IDENT } ;
+
+main_definition ::=
+	  equ_statement
+	| macro_definition
+	| segment_definition
+	| list_control_statement
+	;
+
+--========================================================================
+macro_definition ::=
+	  IDENT 'MACRO' [ '(' ident_list ')' ] eol
+	  	{ macro_preamble_statement }
+		macro_statement
+		{ macro_statement }
+	  IDENT 'END' 'MACRO' eol
+	;
+
+macro_preamble_statement ::=
+	  'LOCAL' ident_list eol
+	;
+
+macro_statement ::=
+	  org_statement
+	| align_statement
+	| equ_statement
+	| macro_definition
+	| segment_definition
+	| op_statement
+	| macro_invocation_statement
+	| data_statement
+	| if_in_macro_group
+	| list_control_statement
+	;
+
+if_in_macro_group ::=
+	  'IF' expr 'THEN' eol
+	  	macro_statement_list
+	  { 'ELSIF' expr 'THEN' eol
+	  	macro_statement_list }
+	  [ 'ELSE' eol
+	  	macro_statement_list ]
+	  'END' 'IF' eol
+	;
+
+macro_statement_list ::= macro_statement { macro_statement } ;
+
+expr_list ::= expr { ',' expr } ;
+
+data_statement ::=
+	  id_opt 'DATA' 'BYTE' expr_list eol -- byte data.
+	| id_opt 'DATA' 'WORD' expr_list eol -- 16bit data.
+	| id_opt 'DATA' 'DOUBLE' 'WORD' expr_list eol -- 32bit data.
+	| id_opt 'DATA' 'FLOAT' expr_list eol -- floating point data (32bit)
+	| id_opt 'DATA' 'DOUBLE' expr_list eol -- floating point data (64bit)
+	;
+
+--========================================================================
+org_statement ::= 'ORG' expr eol ;
+align_statement ::= 'ALIGN' expr eol;
+equ_statement ::= IDENT 'EQU' expr eol;
+macro_invocation_statement ::= IDENT [ '(' expr_list ')' ] eol ;
+
+segment_definition ::=
+	  IDENT 'SEGMENT' [ alig ] [ type ] [ glb ] eol
+	  	segment_statement_list
+	  IDENT 'END' 'SEGMENT' eol
+	;
+
+alig ::=
+	  'ALIGN' expr
+	| 'ABS' expr
+	;
+type ::= 'TEXT' | 'DATA' | 'STACK' | 'COMMON' ;
+glb ::= 'GLOBAL' ;
+
+segment_statement_list ::= segment_statement { segment_statement } ;
+
+segment_statement ::=
+	  org_statement
+	| align_statement
+	| equ_statement
+	| op_statement
+	| macro_invocation_statement
+	| data_statement
+	| if_in_segment_group
+	| list_control_statement
+	;
+
+if_in_segment_group ::=
+	  'IF' expr 'THEN' eol
+	    segment_statement_list
+	  { 'ELSIF' expr 'THEN' eol
+	    segment_statement_list }
+	  [ 'ELSE' eol
+	    segment_statement_list ]
+	  'END' 'IF' eol
+	;
+
+--========================================================================
+-- List control statements:
+
+list_control_statement ::=
+	  list_statement
+	| header_statement
+	| footer_statement
+	| page_definition_statement
+	| page_eject_statement
+	;
+
+list_control_statement_list ::= { list_control_statement } ;
+
+list_statement ::= 'LIST' expr eol ;
+header_statement ::= 'HEADER' expr [ ',' expr [ ',' expr ] ] eol ;
+footer_statement ::= 'FOOTER' expr [ ',' expr [ ',' expr ] ] eol ;
+page_definition_statement ::= 'PAGE' expr [ ',' expr ] eol ;
+page_eject_statement ::= 'PAGE' eol ;
+
+--========================================================================
+-- eol signals one or more end of lines.
+
+eol ::= NEW_LINE { NEW_LINE } ;
+
+id_opt ::= [ IDENT ] ;
+
+--========================================================================
+-- Op Codes and CPU assembler syntax.
+
+op_statement ::=
+	-- grupo de carga de 8 bits.
+	  id_opt 'LD' reg8 ',' reg8 eol
+	| id_opt 'LD' reg8 ',' expr eol
+	| id_opt 'LD' reg8 ',' '[' 'HL' ']' eol
+
+	| id_opt 'LD' reg8 ',' ix_expr eol
+	| id_opt 'LD' reg8 ',' iy_expr eol
+
+	| id_opt 'LD' '[' 'HL' ']' ',' reg8 eol
+
+	| id_opt 'LD' ix_expr ',' reg8 eol
+	| id_opt 'LD' iy_expr ',' reg8 eol
+
+	| id_opt 'LD' '[' 'HL' ']' ',' expr eol
+	| id_opt 'LD' ix_expr ',' expr eol
+	| id_opt 'LD' iy_expr ',' expr eol
+
+	| id_opt 'LD' 'A' ',' '[' 'BC' ']' eol
+	| id_opt 'LD' 'A' ',' '[' 'DE' ']' eol
+	| id_opt 'LD' 'A' ',' '[' expr ']' eol
+
+	| id_opt 'LD' '[' 'BC' ']' ',' 'A' eol
+	| id_opt 'LD' '[' 'DE' ']' ',' 'A' eol
+	| id_opt 'LD' '[' expr ']' ',' 'A' eol
+
+	| id_opt 'LD' 'I' ',' 'A' eol
+	| id_opt 'LD' 'R' ',' 'A' eol
+	| id_opt 'LD' 'A' ',' 'I' eol
+	| id_opt 'LD' 'A' ',' 'R' eol
+
+	  -- grupo de carga de 16 bits.
+	| id_opt 'LD' reg16 ',' expr eol
+	| id_opt 'LD' 'IX' ',' expr eol
+	| id_opt 'LD' 'IY' ',' expr eol
+	| id_opt 'LD' 'HL' ',' '[' expr ']' eol -- ambigua.
+	| id_opt 'LD' reg16 ',' '[' expr ']' eol
+	| id_opt 'LD' 'IX' ',' '[' expr ']' eol
+	| id_opt 'LD' 'IY' ',' '[' expr ']' eol
+	| id_opt 'LD' '[' expr ']' ',' 'HL' eol
+	| id_opt 'LD' '[' expr ']' ',' reg16 eol
+	| id_opt 'LD' '[' expr ']' ',' 'IX' eol
+	| id_opt 'LD' '[' expr ']' ',' 'IY' eol
+	| id_opt 'LD' 'SP' ',' 'HL' eol
+	| id_opt 'LD' 'SP' ',' 'IX' eol
+	| id_opt 'LD' 'SP' ',' 'IY' eol
+	| id_opt 'PUSH' reg16qq eol
+	| id_opt 'PUSH' 'IX' eol
+	| id_opt 'PUSH' 'IY' eol
+	| id_opt 'POP' reg16qq eol
+	| id_opt 'POP' 'IX' eol
+	| id_opt 'POP' 'IY' eol
+
+	  -- exchange, block transfer, block search groups.
+	| id_opt 'EX' ( 'DE' ',' 'HL' | 'HL' ',' 'DE' ) eol
+	| id_opt 'EX' ( 'AF' ',' 'AF' '\043' | 'AF' '\043' ',' 'AF' ) eol
+	| id_opt 'EXX' eol
+
+	| id_opt 'EX' ( '[' 'SP' ']' ',' 'HL' | 'HL' ',' '[' 'SP' ']' ) eol
+
+	| id_opt 'EX' ( '[' 'SP' ']' ',' 'IX' | 'IX' ',' '[' 'SP' ']' ) eol
+
+	| id_opt 'EX' ( '[' 'SP' ']' ',' 'IY' | 'IY' ',' '[' 'SP' ']' ) eol
+
+	| id_opt 'LDI' eol
+	| id_opt 'LDD' eol
+	| id_opt 'LDIR' eol
+	| id_opt 'LDDR' eol
+	| id_opt 'CPI' eol
+	| id_opt 'CPD' eol
+	| id_opt 'CPIR' eol
+	| id_opt 'CPDR' eol
+
+	  -- 8bit Arithmetic and Logic Group.
+	| id_opt op1 'A' ',' reg8 eol
+	| id_opt op1 'A' ',' expr eol
+	| id_opt op1 'A' ',' '[' 'HL' ']' eol
+	| id_opt op1 'A' ',' ix_expr eol
+	| id_opt op1 'A' ',' iy_expr eol
+
+	| id_opt op2 reg8 eol
+	| id_opt op2 expr eol
+	| id_opt op2 '[' 'HL' ']' eol
+	| id_opt op2 ix_expr eol
+	| id_opt op2 iy_expr eol
+
+	| id_opt op3 reg8 eol
+	| id_opt op3 '[' 'HL' ']' eol
+	| id_opt op3 ix_expr eol
+	| id_opt op3 iy_expr eol
+
+	  -- general purpose arithmetic.
+	| id_opt 'DAA' eol
+	| id_opt 'CPL' eol
+	| id_opt 'NEG' eol
+	| id_opt 'CCF' eol
+	| id_opt 'SCF' eol
+	| id_opt 'NOP' eol
+	| id_opt 'HALT' eol
+	| id_opt 'DI' eol
+	| id_opt 'EI' eol
+	| id_opt 'IM0' eol
+	| id_opt 'IM1' eol
+	| id_opt 'IM2' eol
+
+	  -- 16bit arithmetic group.
+	| id_opt 'ADD' 'HL' ',' reg16 eol
+	| id_opt 'ADC' 'HL' ',' reg16 eol
+	| id_opt 'SBC' 'HL' ',' reg16 eol
+	| id_opt 'ADD' 'IX' ',' pp eol
+	| id_opt 'ADD' 'IY' ',' rr eol
+	| id_opt 'INC' reg16 eol
+	| id_opt 'INC' 'IX' eol
+	| id_opt 'INC' 'IY' eol
+	| id_opt 'DEC' reg16 eol
+	| id_opt 'DEC' 'IX' eol
+	| id_opt 'DEC' 'IY' eol
+
+	  -- rotate and shift group.
+	| id_opt 'RLCA' eol
+	| id_opt 'RLA' eol
+	| id_opt 'RRCA' eol
+	| id_opt 'RRA' eol
+
+	| id_opt op4 reg8 eol
+	| id_opt op4 '[' 'HL' ']' eol
+	| id_opt op4 ix_expr eol
+	| id_opt op4 iy_expr eol
+
+	| id_opt 'RLD' eol
+	| id_opt 'RRD' eol
+
+	  -- bit set, reset and test group.
+	| id_opt op5 expr ',' reg8 eol
+	| id_opt op5 expr ',' '[' 'HL' ']' eol
+	| id_opt op5 expr ',' ix_expr eol
+	| id_opt op5 expr ',' iy_expr eol
+
+	  -- Jump group.
+
+	| id_opt 'JP' expr eol
+	| id_opt 'JP' cc1 ',' expr eol
+
+	| id_opt 'JR' expr eol
+	| id_opt 'JR' cc0 ',' expr eol
+
+	| id_opt 'JP' '[' 'HL' ']' eol
+	| id_opt 'JP' '[' 'IX' ']' eol
+	| id_opt 'JP' '[' 'IY' ']' eol
+
+	| id_opt 'DJNZ' expr eol
+	| id_opt 'CALL' expr eol
+	| id_opt 'CALL' cc1 ',' expr eol
+	| id_opt 'RET' eol
+	| id_opt 'RET' cc1 eol
+	| id_opt 'RETI' eol
+	| id_opt 'RETN' eol
+	| id_opt 'RST' expr eol
+
+	  -- Input and output Group.
+
+	| id_opt 'IN' 'A' ',' '[' expr ']' eol
+	| id_opt 'IN' reg8 ',' '[' 'C' ']' eol
+	| id_opt 'INI'
+	| id_opt 'INIR'
+	| id_opt 'IND'
+	| id_opt 'INDR'
+	| id_opt 'OUT' '[' expr ']' ',' 'A' eol
+	| id_opt 'OUT' '[' 'C' ']' ',' reg8 eol
+	| id_opt 'OUTI'
+	| id_opt 'OTIR'
+	| id_opt 'OUTD'
+	| id_opt 'OTDR'
+	;
+
+ix_expr ::=
+	  '[' 'IX' [ '+'  expr ] ']'
+	| '[' 'IX' '-' expr ']'
+	;
+
+iy_expr ::=
+	  '[' 'IY' [ '+' expr ] ']'
+	| '[' 'IY' '-' expr ']'
+	;
+
+op1 ::= 'ADD' | 'ADC' | 'SBC' ;
+op2 ::= 'SUB' | 'AND' | 'OR' | 'XOR' | 'CP' ;
+op3 ::= 'INC' | 'DEC' ;
+op4 ::= 'RLC' | 'RL' | 'RRC' | 'RR' | 'SLA' | 'SRA' | 'SRL' ;
+op5 ::= 'BIT' | 'SET' | 'RES' ;
+
+cc0 ::= 'NZ' | 'Z' | 'NC' | 'C' ;
+cc1 ::= cc0 | 'PO' | 'PE' | 'P' | 'M' ;
+
+reg8 ::=
+	  'B' -- 000 0x00
+	| 'C' -- 001 0x01
+	| 'D' -- 010 0x02
+	| 'E' -- 011 0x03
+	| 'H' -- 100 0x04
+	| 'L' -- 101 0x05
+	| 'A' -- 111 0x07
+	;
+
+reg16 ::=
+	  'BC' -- 00 0x00
+	| 'DE' -- 01 0x01
+	| 'HL' -- 10 0x02
+	| 'SP' -- 11 0x03
+	;
+
+reg16qq ::=
+	  'BC' -- 00 0x00
+	| 'DE' -- 01 0x01
+	| 'HL' -- 10 0x02
+	| 'AF' -- 11 0x03
+	;
+
+pp ::=
+	  'BC' -- 00 0x00
+	| 'DE' -- 01 0x01
+	| 'IX' -- 10 0x02
+	| 'SP' -- 11 0x03
+	;
+
+rr ::=
+	  'BC' -- 00 0x00
+	| 'DE' -- 01 0x01
+	| 'IY' -- 10 0x02
+	| 'SP' -- 11 0x03
+	;
+
+--========================================================================
+-- Expresiones.
+
+expr ::= bool bool_op bool ;
+
+bool ::=
+	  adicion rel_op adicion
+	| 'NOT' bool
+	| '!' bool
+	;
+
+adicion ::= [ '-' | '+' ] term { add_op term } ;
+
+term ::= factor { mult_op factor } ;
+
+factor ::=
+	  IDENT
+	| NUMBER
+	| STRING
+	| '(' expr ')'
+	;
+
+bool_op ::=
+	  'AND' | 'OR'
+	| 'XOR' | '&'
+	| '|'   | '^'
+	;
+
+add_op ::= '+' | '-' ;
+mult_op ::= '*' | '/' | 'MOD' ;
+
+rel_op ::=
+	  '>'  | '>='
+	| '='  | '<='
+	| '<'  | '!='
+	| 'G'  | 'GE'
+	| 'EQ' | 'LE'
+	| 'L'  | 'NE'
+	;
+
+-- $Id: z80syntax.bnf,v 1.11 2012/09/21 18:13:55 luis Exp $

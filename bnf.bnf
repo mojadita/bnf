@@ -1,0 +1,35 @@
+-- $Id: bnf.bnf,v 1.2 2012/09/08 15:58:11 luis Exp $
+-- vim: sw=4 ts=4 ai nu
+-- Author: Luis Colorado <lc@luiscoloradosistemas.com>
+-- Date: mar ago 21 08:48:42 CEST 2012
+-- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
+--                 All rights reserved.
+
+grammar ::= def_list rule_list ; -- alt 000
+
+def_list ::= {
+	  '%symnbol' IDENT '=' STRING -- alt 001
+	| '%token' IDENT -- alt 002
+	| '%goal' IDENT -- alt 003
+	}; -- alt 004
+
+rule_list ::= rule { rule -- alt 005
+	} ; -- alt 006
+
+rule ::= IDENT '::=' alternative_list ';' ; -- alt 007
+
+alternative_list ::= alternative { alternative -- alt 008
+	} ; -- alt 010
+
+alternative ::= { term -- alt 009
+	} ; -- alt 010
+
+term ::=
+	  IDENT -- alt 011
+	| STRING -- alt 012
+	| '{' alternative_list '}' -- alt 013
+	| '[' alternative_list ']' -- alt 014
+	| '(' alternative_list ')' -- alt 015
+	;
+
+-- $Id: bnf.bnf,v 1.2 2012/09/08 15:58:11 luis Exp $
