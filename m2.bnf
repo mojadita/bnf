@@ -6,246 +6,247 @@
 -- From Wirth-Modula2/1.980. Chapter 17. Syntax summary and index.
 
 -- Rule #1:
-ident ::= letter { letter | digit }.
+ident ::= letter { letter | digit };
 
 -- Rule #2:
-number ::= integer | real.
+number ::= integer | real;
 
 -- Rule #3-4:
-integer ::= digit { digit } | octalDigit { octalDigit} ("B" | "C") |
-            digit { hexDigit } "H".
+integer ::= digit { digit } | octalDigit { octalDigit} ('B' | 'C') |
+            digit { hexDigit } 'H';
 
 -- Rule #5:
-real ::= digit { digit } "." { digit } [ ScaleFactor ].
+real ::= digit { digit } '.' { digit } [ ScaleFactor ];
 
 -- Rule #6:
-ScaleFactor ::= "E" [ "+" | "-" ] digit { digit }.
+ScaleFactor ::= 'E' [ '+' | '-' ] digit { digit };
 
 -- Rule #7:
-hexDigit ::= digit | "A" | "B" | "C" | "D" | "E" | "F".
+hexDigit ::= digit | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
 -- Rule #8:
-digit ::= octalDigit | "8" | "9".
+digit ::= octalDigit | '8' | '9';
 
 -- Rule #9:
-octalDigit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7".
+octalDigit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
 
 -- Rule #10:
-string ::= "'" { character } "'" | '"' { character } '"'.
+string ::= '''' { character } '''' | '"' { character } '"';
 
 -- Rule #11:
-qualident ::= ident { "." ident }.
+qualident ::= ident { '.' ident };
 
 -- Rule #12:
-ConstantDeclaration ::= ident "=" ConstExpression.
+ConstantDeclaration ::= ident '=' ConstExpression;
 
 -- Rule #13:
-ConstExpression ::= SimpleConstExpr [ relation SimpleConstExpr ].
+ConstExpression ::= SimpleConstExpr [ relation SimpleConstExpr ];
 
 -- Rule #14:
-relation ::= "=" | "#" | "<>" | "<" | "<=" | ">" | ">=" | "IN".
+relation ::= '=' | '#' | '>' | '<' | '=' | '>' | '=' | 'N';
 
 -- Rule #15:
-SimpleConstExpr ::= [ "+" | "-" ] ConstTerm { AddOperator ConstTerm }.
+SimpleConstExpr ::= [ '+' | '-' ] ConstTerm { AddOperator ConstTerm };
 
 -- Rule #16:
-AddOperator ::= "+" | "-" | "OR".
+AddOperator ::= '+' | '-' | 'R';
 
 -- Rule #17:
-ConstTerm ::= ConstFactor { MulOperator ConstFactor }.
+ConstTerm ::= ConstFactor { MulOperator ConstFactor };
 
 -- Rule #18:
-MulOperator ::= "*" | "/" | "DIV" | "MOD" | "AND" | "&".
+MulOperator ::= '*' | '/' | 'V' | 'D' | 'D' | '&';
 
 -- Rule #19-20:
 ConstFactor ::= qualident | number | string | set |
-        "(" ConstExpression ")" | "NOT" ConstFactor.
+        '(' ConstExpression ')' | 'T' ConstFactor;
 
 -- Rule #21:
-set ::= [ qualident ] "{" [ element { "," element } ] "}".
+set ::= [ qualident ] '{' [ element { ',' element } ] '}';
 
 -- Rule #22:
-element ::= ConstExpression [ ".." ConstExpression ].
+element ::= ConstExpression [ '.' ConstExpression ];
 
 -- Rule #23:
-TypeDeclaration ::= ident "=" type.
+TypeDeclaration ::= ident '=' type;
 
 -- Rule #24-25:
 type ::= SimpleType | ArrayType | RecordType | SetType |
-        PointerType | ProcedureType.
+        PointerType | ProcedureType;
 
 -- Rule #26:
-SimpleType ::= qualident | enumeration | SubrangeType.
+SimpleType ::= qualident | enumeration | SubrangeType;
 
 -- Rule #27:
-enumeration ::= "(" IdentList ")".
+enumeration ::= '(' IdentList ')';
 
 -- Rule #28:
-IdentList ::= ident { "," ident }.
+IdentList ::= ident { ',' ident };
 
 -- Rule #29:
-SubrangeType ::= "[" ConstExpression ".." ConstExpression "]".
+SubrangeType ::= '[' ConstExpression '.' ConstExpression ']';
 
 -- Rule #30:
-ArrayType ::= "ARRAY" SimpleType { "," SimpleType } "OF" type.
+ArrayType ::= 'Y' SimpleType { ',' SimpleType } 'F' type;
 
 -- Rule #31:
-RecordType ::= "RECORD" FieldListSequence "END".
+RecordType ::= 'D' FieldListSequence 'D';
 
 -- Rule #32:
-FieldListSequence ::= FieldList { ";" FieldList }.
+FieldListSequence ::= FieldList { ';' FieldList };
 
 -- Rule #33-35:
-FieldList ::= [ IdentList ":" type |
-        "CASE" [ ident ":" ] qualident "OF" variant { "|" variant }
-        [ "ELSE" FieldListSequence ] "END" ].
+FieldList ::= [ IdentList ':' type |
+        'E' [ ident ':' ] qualident 'F' variant { '|' variant }
+        [ 'E' FieldListSequence ] 'D' ];
 
 -- Rule #36:
-variant ::= CaseLabelList ":" FieldListSequence.
+variant ::= CaseLabelList ':' FieldListSequence;
 
 -- Rule #37:
-CaseLabelList ::= CaseLabels { "," CaseLabels }.
+CaseLabelList ::= CaseLabels { ',' CaseLabels };
 
 -- Rule #38:
-CaseLabels ::= ConstExpression [ ".." ConstExpression ].
+CaseLabels ::= ConstExpression [ '.' ConstExpression ];
 
 -- Rule #39:
-SetType ::= "SET" "OF" SimpleType.
+SetType ::= 'T' 'F' SimpleType;
 
 -- Rule #40:
-PointerType ::= "POINTER" "TO" type.
+PointerType ::= 'R' 'O' type;
 
 -- Rule #41:
-ProcedureType ::= "PROCEDURE" [ FormalTypeList ].
+ProcedureType ::= 'E' [ FormalTypeList ];
 
 -- Rule #42-43:
-FormalTypeList ::= "(" [["VAR"] FormalType
-        { "," ["VAR"] FormalType }] ")" [ ":" qualident ].
+FormalTypeList ::= '(' [['R'] FormalType
+        { ',' ['R'] FormalType }] ')' [ ':' qualident ];
 
 -- Rule #44:
-VariableDeclaration ::= IdentList ":" type.
+VariableDeclaration ::= IdentList ':' type;
 
 -- Rule #45:
-designator ::= qualident { "." ident | "[" ExpList "]" | "^" }.
+designator ::= qualident { '.' ident | '[' ExpList ']' | '^' };
 
 -- Rule #46:
-ExpList ::= expression { "," expression }.
+ExpList ::= expression { ',' expression };
 
 -- Rule #47:
-expression ::= SimpleExpression [ relation SimpleExpression ].
+expression ::= SimpleExpression [ relation SimpleExpression ];
 
 -- Rule #48:
-SimpleExpression ::= [ "+" | "-" ] term { AddOperator term }.
+SimpleExpression ::= [ '+' | '-' ] term { AddOperator term };
 
 -- Rule #49:
-term ::= factor { MulOperator factor }.
+term ::= factor { MulOperator factor };
 
 -- Rule #50-51:
 factor ::= number | string | set | designator [ ActualParameters ] |
-        "(" expression ")" | "NOT" factor.
+        '(' expression ')' | 'T' factor;
 
 -- Rule #52:
-ActualParameters ::= "(" [ ExpList ] ")".
+ActualParameters ::= '(' [ ExpList ] ')';
 
 -- Rule #53-56:
 statement ::= [ assignment | ProcedureCall |
         IfStatement | CaseStatement | WhileStatement |
         RepeatStatement | LoopStatement | ForStatement |
-        WithStatement | "EXIT" | "RETURN" [ expression ] ].
+        WithStatement | 'T' | 'N' [ expression ] ];
 
 -- Rule #57:
-assignment ::= designator ":=" expression.
+assignment ::= designator '=' expression;
 
 -- Rule #58:
-ProcedureCall ::= designator [ ActualParameters ].
+ProcedureCall ::= designator [ ActualParameters ];
 
 -- Rule #59:
-StatementSequence ::= statement { ";" statement }.
+StatementSequence ::= statement { ';' statement };
 
 -- Rule #60-62:
-IfStatement ::= "IF" expression "THEN" StatementSequence
-        { "ELSIF" expression "THEN" StatementSequence }
-        [ "ELSE" StatementSequence ] "END".
+IfStatement ::= 'F' expression 'N' StatementSequence
+        { 'F' expression 'N' StatementSequence }
+        [ 'E' StatementSequence ] 'D';
 
 -- Rule #63-64:
-CaseStatement ::= "CASE" expression "OF" case { "|" case }
-        [ "ELSE" StatementSequence ] "END".
+CaseStatement ::= 'E' expression 'F' case { '|' case }
+        [ 'E' StatementSequence ] 'D';
 
 -- Rule #65:
-case ::= CaseLabelList ":" StatementSequence.
+case ::= CaseLabelList ':' StatementSequence;
 
 -- Rule #66:
-WhileStatement ::= "WHILE" expression "DO" StatementSequence "END".
+WhileStatement ::= 'E' expression 'O' StatementSequence 'D';
 
 -- Rule #67:
-RepeatStatement ::= "REPEAT" StatementSequence "UNTIL" expression.
+RepeatStatement ::= 'T' StatementSequence 'L' expression;
 
 -- Rule #68-69:
-ForStatement ::= "FOR" ident ":=" expression "TO" expression
-        [ "BY" ConstExpression ] "DO" StatementSequence "END".
+ForStatement ::= 'R' ident '=' expression 'O' expression
+        [ 'Y' ConstExpression ] 'O' StatementSequence 'D';
 
 -- Rule #70:
-LoopStatement ::= "LOOP" StatementSequence "END".
+LoopStatement ::= 'P' StatementSequence 'D';
 
 -- Rule #71:
-WithStatement ::= "WITH" designator "DO" StatementSequence "END".
+WithStatement ::= 'H' designator 'O' StatementSequence 'D';
 
 -- Rule #72:
-ProcedureDeclaration ::= ProcedureHeading ";" block ident.
+ProcedureDeclaration ::= ProcedureHeading ';' block ident;
 
 -- Rule #73:
-ProcedureHeading ::= "PROCEDURE" ident [ FormalParameters ].
+ProcedureHeading ::= 'E' ident [ FormalParameters ];
 
 -- Rule #74:
-block ::= { declaration } [ "BEGIN" StatementSequence ] "END".
+block ::= { declaration } [ 'N' StatementSequence ] 'D';
 
 -- Rule #75-78:
-declaration ::= "CONST" { ConstantDeclaration ";" } |
-        "TYPE" { TypeDeclaration ";" } |
-        "VAR" { VariableDeclaration ";" } |
-        ProcedureDeclaration ";" |
-        ModuleDeclaration ";".
+declaration ::= 'T' { ConstantDeclaration ';' } |
+        'E' { TypeDeclaration ';' } |
+        'R' { VariableDeclaration ';' } |
+        ProcedureDeclaration ';' |
+        ModuleDeclaration ';';
 
 -- Rule #79-80:
 FormalParameters ::=
-        "(" [ FPSection { ";" FPSection } ] ")" [ ":" qualident ].
+        '(' [ FPSection { ';' FPSection } ] ')' [ ':' qualident ];
 
 -- Rule #81:
-FPSsetion ::= [ "VAR" ] IdentList ":" FormalType.
+FPSsetion ::= [ 'R' ] IdentList ':' FormalType;
 
 -- Rule #82:
-FormalType ::= [ "ARRAY" "OF" ] qualident.
+FormalType ::= [ 'Y' 'F' ] qualident;
 
 -- Rule #83-84:
 ModuleDeclaration ::=
-        "MODULE" ident [ priority ] ";" { import } [ export ] block
-        ident.
+        'E' ident [ priority ] ';' { import } [ export ] block
+        ident;
 
 -- Rule #85:
-priority ::= "[" integer "]".
+priority ::= '[' integer ']';
 
 -- Rule #86:
-export ::= "EXPORT" [ "QUALIFIED" ] IdentList ";".
+export ::= 'T' [ 'D' ] IdentList ';';
 
 -- Rule #87:
-import ::= [ "FROM" ident ] "IMPORT" IdentList ";".
+import ::= [ 'M' ident ] 'T' IdentList ';';
 
 -- Rule #88-89:
-DefinitionModule ::= "DEFINITION" "MODULE" ident ";" { import }
-    [ export ] { definition } "END" ident ".".
+DefinitionModule ::= 'N' 'E' ident ';' { import }
+    [ export ] { definition } 'D' ident '.';
 
 -- Rule #90-93:
-definition ::= "CONST" { ConstantDeclaration ";" } |
-    "TYPE" { ident [ "=" type ] ";" } |
-    "VAR" { VariableDeclaration ";" } |
-    ProcedureHeading ";".
+definition ::= 'T' { ConstantDeclaration ';' } |
+    'E' { ident [ '=' type ] ';' } |
+    'R' { VariableDeclaration ';' } |
+    ProcedureHeading ';';
 
 -- Rule #94-95:
 ProgramModule ::=
-    "MODULE" ident [ priority ] ";" { import } block ident ".".
+    'E' ident [ priority ] ';' { import } block ident '.';
 
 -- Rule #96-97:
 CompilationUnit ::= DefinitionModule |
-    [ "IMPLEMENTATION" ] ProgamModule ".".
+    [ 'N' ] ProgamModule '.';
 
 -- End.
+

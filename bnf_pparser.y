@@ -97,8 +97,6 @@ static int nerr = 0;
 %token	COLON_COLON_EQ
 
 %type	<grammar>					grammar
-%type	<def_list>					def_list
-%type	<def>						def
 %type	<rule_list>					rule_list
 %type	<rule>						rule
 %type	<alternative_list>			alternative_list
@@ -110,8 +108,6 @@ static int nerr = 0;
 
 %union {
 	struct grammar*					grammar;
-	struct def_list*				def_list;
-	struct def*						def;
 	struct rule_list*				rule_list;
 	struct rule*					rule;
 	struct alternative_list*		alternative_list;
@@ -124,53 +120,13 @@ static int nerr = 0;
 %%
 
 grammar:
-	  def_list
 	  rule_list {
 		P("001.01","grammar");
 			NT("def_list");
-			NT("rule_list");EOL();
+			NT("rule_list"); EOL();
 
-		parsed_grammar = $$ = new_grammar($1, $2);
+		parsed_grammar = $$ = new_grammar($1);
 		return nerr;
-	}
-	| error {
-	}
-	;
-
-def_list:
-	  def_list def {
-	  	P("002.01","def_list");
-			NT("def_list");
-			NT("def"); EOL();
-		$$ = new_def_list_1($1, $2);
-	}
-	| /* empty */ {
-		P("002.02","def_list");
-			EMPTY();EOL();
-		$$ = new_def_list_2();
-	}
-	;
-
-def:
-	  _SYMBOL IDENT '=' STRING {
-	  	P("003.01","def");
-			OP("%%symbol");
-			TE("IDENT");
-			OP("=");
-			TE("STRING");EOL();
-		$$ = new_def_1($2, $4);
-	}
-	| _TOKEN IDENT {
-		P("003.02","def");
-			OP("%%token");
-			TE("IDENT");EOL();
-		$$ = new_def_2($2);
-	}
-	| _GOAL IDENT {
-		P("003.03","def");
-			OP("%%goal");
-			TE("IDENT");EOL();
-		$$ = new_def_3($2);
 	}
 	;
 
@@ -196,7 +152,9 @@ rule:
 			NT("alternative_list");EOL();
 	  	$$ = new_rule($1, $3);
 	}
-	| error ';'
+	| error ';' {
+        $$ = NULL;
+    }
 	;
 
 alternative_list:
@@ -273,13 +231,12 @@ term:
 %%
 
 struct grammar* new_grammar(
-		struct def_list*						dl,
 		struct rule_list*						lr)
 {
 	struct grammar *res;
 	char key[64];
 	AVL_ITERATOR p;
-	sprintf(key, "GR(%p,%p)", dl, lr);
+	sprintf(key, "GR(%p)", lr);
 	res = avl_tree_get(tab_subtrees, key);
 	if (res) {
 		res->ref_count++;
@@ -290,149 +247,12 @@ struct grammar* new_grammar(
 	} /* if */
 	assert(res = malloc(sizeof(struct grammar)));
 	res->ref_count = 1;
-	res->def_list = dl;
-	res->rule_list = lr;
 	LIST_INIT(&res->rul_lst);
 	p = avl_tree_put(tab_subtrees, key, res);
 	res->key = avl_iterator_key(p);
 
 	return res;
 } /* new_grammar */
-
-struct def_list* new_def_list_1(
-		struct def_list*						p1,
-		struct def*								p2)
-{
-	struct def_list* res;
-	char key[64];
-	AVL_ITERATOR p;
-
-	sprintf(key, "DL1(%p,%p)", p1, p2);
-	res = avl_tree_get(tab_subtrees, key);
-	if (res) {
-		res->ref_count++;
-#if 0
-		printf("%s <- %d\n", key, res->ref_count);
-#endif
-		return res;
-	} /* if */
-	assert(res = malloc(sizeof(struct def_list)));
-	res->ref_count = 1;
-	res->_alt = 1;
-	res->_alt_1.def_list = p1;
-	res->_alt_1.def = p2;
-	p = avl_tree_put(tab_subtrees, key, res);
-	res->key = avl_iterator_key(p);
-
-	return res;
-} /* new_def_list_1 */
-
-struct def_list* new_def_list_2()
-{
-	return NULL;
-} /* new_def_list_2 */
-
-struct def* new_def_1(
-		struct tokeninfo*						p1,
-		struct tokeninfo*						p2)
-{
-	struct def* res; AVL_ITERATOR t, s;
-	char *s1, *s2;
-	char key[128];
-	AVL_ITERATOR p;
-
-	sprintf(key, "D1(%s,%s)", p1->str, p2->str);
-	res = avl_tree_get(tab_subtrees, key);
-	if (res) {
-		res->ref_count++;
-#if 0
-		printf("%s <- %d\n", key, res->ref_count);
-#endif
-		return res;
-	} /* if */
-	assert(res = malloc(sizeof(struct def)));
-	res->ref_count = 1;
-	res->_alt = 1;
-	res->_alt_1.ident = p1;
-	res->_alt_1.string = p2;
-
-	if ((s1 = avl_tree_get(symbol2token, p2->str))
-		|| (s2 = avl_tree_get(token2symbol, p1->str)))
-	{
-		fprint_tokeninfo(stderr,
-			"ATENCION: %%symbol %s = %s redefine %s\n",
-			p1->str, p2->str, s1 ? p2->str : p1->str);
-	} /* if */
-
-	/* AHORA VIENE UNA OPERACI\'ON COMPLICADA: Para no tener que
-	 * allocar memoria, hemos ajustado el puntero de cada uno de
-	 * los arboles a la clave indicada por el otro, de forma que
-	 * al borrar las claves se devuelva la memoria usada por los
-	 * datos. */
-	t = avl_tree_put(symbol2token, p2->str, NULL);
-	s = avl_tree_put(token2symbol, p1->str, avl_iterator_key(t));
-	avl_tree_put(symbol2token, p2->str, avl_iterator_key(s));
-	p = avl_tree_put(tab_subtrees, key, res);
-	res->key = avl_iterator_key(p);
-	
-	return res;
-} /* new_def_1 */
-
-struct def* new_def_2(
-		struct tokeninfo*						p1)
-{
-	struct def* res;
-	AVL_ITERATOR t, s;
-	char key[64];
-	AVL_ITERATOR p;
-
-	sprintf(key, "D2(%s)", p1->str);
-	res = avl_tree_get(tab_subtrees, key);
-	if (res) {
-		res->ref_count++;
-#if 0
-		printf("%s <- %d\n", key, res->ref_count);
-#endif
-		return res;
-	} /* if */
-	assert(res = malloc(sizeof(struct def)));
-	res->ref_count = 1;
-	res->_alt = 2;
-	res->_alt_2.ident = p1;
-	t = avl_tree_put(symbol2token, p1->str, NULL);
-	s = avl_tree_put(token2symbol, p1->str, avl_iterator_key(t));
-	avl_tree_put(symbol2token, p1->str, avl_iterator_key(s));
-	p = avl_tree_put(tab_subtrees, key, res);
-	res->key = avl_iterator_key(p);
-
-	return res;
-} /* new_def_2 */
-
-struct def* new_def_3(
-		struct tokeninfo*						p1)
-{
-	struct def* res;
-	char key[64];
-	AVL_ITERATOR p;
-
-	sprintf(key, "D3(%s)", p1->str);
-	res = avl_tree_get(tab_subtrees, key);
-	if (res) {
-		res->ref_count++;
-#if 0
-		printf("%s <- %d\n", key, res->ref_count);
-#endif
-		return res;
-	} /* if */
-	assert(res = malloc(sizeof(struct def)));
-	res->ref_count = 1;
-	res->_alt = 3;
-	res->_alt_3.ident = p1;
-	p = avl_tree_put(tab_subtrees, key, res);
-	res->key = avl_iterator_key(p);
-
-	return res;
-} /* new_def_3 */
 
 struct rule_list* new_rule_list_1(
 		struct rule_list* p1,

@@ -44,7 +44,6 @@ struct grammar {
 }; /* struct grammar */
 
 struct grammar* new_grammar(
-		struct def_list*				p1,
 		struct rule_list*				p2);
 
 /******** struct def_list *****************************/

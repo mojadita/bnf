@@ -17,6 +17,7 @@
 #define TRUE								(!FALSE)
 #endif
 
+#include "bnf.h"
 #include "avl.h"
 #include "bnf_tabsim.h"
 #include "bnf_sparser.h"
@@ -43,7 +44,7 @@ char copyright[] =
 " * Version: 0.51\n"
 " * Author: Luis Colorado <lc@luiscoloradosistemas.com>\n"
 " * Date: mié jul 18 14:43:30 CEST 2012\n"
-" * Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.\n"
+" * Disclaimer: (C) 2012-2015 LUIS COLORADO SISTEMAS S.L.U.\n"
 " *             All rights reserved.\n";
 
 int main(int argc, char **argv)
@@ -56,13 +57,22 @@ int main(int argc, char **argv)
 	symbol2token = new_avl_tree(strcmp);
 	tab_subtrees = new_avl_tree(strcmp);
 
-	while ((opt = getopt(argc, argv, "VlpntCm:""x::X::h::c::y::")) != EOF) {
+	while ((opt = getopt(argc, argv, "vd:ntCm:""x::X::h::c::y::")) != EOF) {
 		switch(opt) {
-		case 'V':
-			printf("%s", copyright);
-			exit(0);
-		case 'l': flags ^= FLAG_SCANNER; break;
-		case 'p': flags ^= FLAG_PARSER; break;
+            char *s;
+		case 'v': printf("%s", copyright); return EXIT_SUCCESS;
+        case 'd': for (s = optarg; *s; s++) {
+                      switch(*s) {
+                      case 's': flags ^= FLAG_SCANNER; break;
+                      case 'p': flags ^= FLAG_PARSER; break;
+                      default:
+                                fprintf(stderr,
+                                        D("unknown debug flag: %c\n"),
+                                        *s);
+                                break;
+                      } /* switch */
+                  } /* for */
+                  break;
 		case 'n': flags ^= FLAG_NOTER_LIST; break;
 		case 't': flags ^= FLAG_TER_LIST; break;
 		case 'C': flags ^= FLAG_NOCOLOR; break;
