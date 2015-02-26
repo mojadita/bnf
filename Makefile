@@ -4,7 +4,7 @@
 # Date: lun jul 16 11:14:49 CEST 2012
 # Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 
-targets = tstavl bnf
+targets = bnf
 
 .PHONY: all clean
 
