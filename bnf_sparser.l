@@ -53,7 +53,7 @@ static char*			esc6 = "\e[0m";
 %option					noyywrap
 %option					yylineno
 
-ident					([a-zA-Z][a-zA-Z0-9_]*)
+ident					([a-z_A-Z][a-z_A-Z0-9]*)
 chr						("'"([^\'\n]|\'\')*"'")
 chr2					("'"([^\'\n]|\'\')*)$
 str						(\"([^\"\n]|\"\")*\")
@@ -66,9 +66,6 @@ com						("--".*)
 "\t"		{	yycolno -= (yycolno-HOME) % TABSIZE; yycolno += TABSIZE; }
 "\n"		{	yycolno = HOME; }
 
-"%symbol"	{	ADD(TRUE); TRACE(_SYMBOL);			ACT(); return(_SYMBOL); }
-"%token"	{	ADD(TRUE); TRACE(_TOKEN);			ACT(); return(_TOKEN); }
-"%goal"		{	ADD(TRUE); TRACE(_GOAL);			ACT(); return(_GOAL); }
 "::="		{	ADD(TRUE); TRACE(COLON_COLON_EQ);	ACT(); return(COLON_COLON_EQ); }
 
 {ident}		{	ADD(FALSE);	TRACE(IDENT);			ACT(); return(IDENT); }

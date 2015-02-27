@@ -5,31 +5,17 @@
 -- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 --                 All rights reserved.
 
-grammar ::= def_list rule_list ; -- alt 000
+grammar ::=  rule { rule } ;
 
-def_list ::= {
-	  '%symnbol' IDENT '=' STRING -- alt 001
-	| '%token' IDENT -- alt 002
-	| '%goal' IDENT -- alt 003
-	}; -- alt 004
+rule ::= IDENT '::=' alternative { '|' alternative } ';' ; -- alt 007
 
-rule_list ::= rule { rule -- alt 005
-	} ; -- alt 006
+alternative ::= { term  } ;
 
-rule ::= IDENT '::=' alternative_list ';' ; -- alt 007
-
-alternative_list ::= alternative { alternative -- alt 008
-	} ; -- alt 010
-
-alternative ::= { term -- alt 009
-	} ; -- alt 010
-
-term ::=
-	  IDENT -- alt 011
-	| STRING -- alt 012
-	| '{' alternative_list '}' -- alt 013
-	| '[' alternative_list ']' -- alt 014
-	| '(' alternative_list ')' -- alt 015
+term ::= IDENT
+	| STRING
+	| '{' alternative { alternative } '}'
+	| '[' alternative { alternative } ']'
+	| '(' alternative { alternative } ')'
 	;
 
 -- $Id: bnf.bnf,v 1.2 2012/09/08 15:58:11 luis Exp $
