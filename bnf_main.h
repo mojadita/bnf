@@ -9,6 +9,8 @@
 #ifndef ESQ_MAIN_H
 #define ESQ_MAIN_H
 
+#define D(x) __FILE__":%d:%s:" x, __LINE__, __func__
+
 #define FLAG_SCANNER		    1
 #define FLAG_PARSER			    2
 #define FLAG_NOTER_LIST		    4

@@ -121,6 +121,7 @@ int main(int argc, char **argv)
 
 	res = yyparse();
 
+#if 0
 	if (res == 0) {
 		AVL_ITERATOR p;
 
@@ -193,6 +194,7 @@ int main(int argc, char **argv)
 					: "\e[36m%s\e[0m%s");
 #endif
 	} /* if */
+#endif
 } /* main */
 
 /* $Id: bnf_main.c,v 1.24 2012/10/05 11:10:55 luis Exp $ */

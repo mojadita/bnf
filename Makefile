@@ -26,7 +26,6 @@ $(tstavl_objs): avl.h
 
 bnf_objs = \
 	bnf_pparser.o \
-	avl.o \
 	bnf_sparser.o \
 	tokeninfo.o \
 	bnf_main.o \
@@ -34,8 +33,9 @@ bnf_objs = \
 	print_strtable.o \
 	bnf_cfg.o \
 	pass0.o pass1.o pass2.o \
-	pass3.o pass4.o
-bnf_libs =
+	pass3.o pass4.o \
+	intern.o
+bnf_libs = -lavl
 bnf: $(bnf_objs)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o bnf $(bnf_objs) $(bnf_libs)
 

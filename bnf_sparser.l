@@ -13,6 +13,7 @@
  */
 
 
+#include "intern.h"
 #include "bnf_pparser.h"
 #include "tokeninfo.h"
 #include "bnf_main.h"

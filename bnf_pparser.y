@@ -55,7 +55,7 @@ static char*						trm_on="\e[32m";
 static char*						trm_off="\e[0m";
 static char*						ntm_on="\e[36m";
 static char*						ntm_off="\e[0m";
-static char*						ope_on="\e[31m";
+static char*						ope_on="\e[32m";
 static char*						ope_off="\e[0m";
 static char*						eol_on="\e[31m";
 static char*						eol_off="\e[0m";
@@ -96,6 +96,7 @@ static int nerr = 0;
 %token	_SYMBOL _TOKEN _GOAL
 %token	COLON_COLON_EQ
 
+/*
 %type	<grammar>					grammar
 %type	<rule_list>					rule_list
 %type	<rule>						rule
@@ -103,6 +104,7 @@ static int nerr = 0;
 %type	<alternative>				alternative
 %type	<term_list>					term_list
 %type	<term>						term
+*/
 
 %token	<tokeninfo>					IDENT STRING UNTERMINATED_STRING
 
@@ -120,111 +122,92 @@ static int nerr = 0;
 %%
 
 grammar:
-	  rule_list {
+	  grammar rule {
 		P("001.01","grammar");
-			NT("def_list");
-			NT("rule_list"); EOL();
-
-		parsed_grammar = $$ = new_grammar($1);
-		return nerr;
+			NT("grammar");
+			NT("rule"); EOL();
 	}
-	;
-
-rule_list:
-	  rule_list rule {
-		P("004.01","rule_list");
-			NT("rule_list");
-			NT("rule");EOL();
-		$$ = new_rule_list_1($1, $2);
-	}
-	| rule {
-		P("004.02","rule_list");
-			NT("rule");EOL();
-		$$ = new_rule_list_2($1);
-	}
+    | rule {
+        P("001.02","grammar");
+            NT("rule"); EOL();
+    }
 	;
 
 rule:
 	  IDENT COLON_COLON_EQ alternative_list ';' {
-	  	P("005.02","rule");
+	  	P("002.01","rule");
 			TE("IDENT");
 			OP("::=");
-			NT("alternative_list");EOL();
-	  	$$ = new_rule($1, $3);
+			NT("alternative_list");
+            OP(";");
+            EOL();
 	}
 	| error ';' {
-        $$ = NULL;
+        fprintf(stderr,
+            D("syntax error recovered after ';'\n"));
     }
 	;
 
 alternative_list:
-	  alternative_list '|' alternative {
-		P("006.01","alternative_list");
+	  alternative_list '|' term_list {
+		P("003.01","alternative_list");
 			NT("alternative_list");
 			OP("|");
-			NT("alternative");EOL();
-	  	$$ = new_alternative_list_1($1, $3);
+			NT("term_list");
+            EOL();
 	}
-	| alternative {
-		P("006.02","alternative_list");
-			NT("alternative");EOL();
-		$$ = new_alternative_list_2($1);
-	}
-	;
-
-alternative:
-	  term_list {
-	  	P("007.01","alternative");
-			NT("term_list");EOL();
-		$$ = new_alternative($1);
+	| term_list {
+		P("003.02","alternative_list");
+			NT("alternative");
+            EOL();
 	}
 	;
 
 term_list:
 	  term_list term {
-		P("008.01","term_list");
+		P("004.01","term_list");
 			NT("term_list");
-			NT("term");EOL();
-	  	$$ = new_term_list_1($1, $2);
+			NT("term");
+            EOL();
 	}
 	| {
-		P("008.02","term_list");
-			EMPTY();EOL();
-		$$ = new_term_list_2();
+		P("004.02","term_list");
+			EMPTY();
+            EOL();
 	}
 	;
 
 term:
 	  IDENT {
-		P("009.01","term");
-			TE("IDENT");EOL();
-		$$ = new_term_1($1);
+		P("005.01","term");
+			TE("IDENT");
+            EOL();
 	}
 	| STRING {
-		P("009.02","term");
-			TE("STRING");EOL();
-		$$ = new_term_2($1);
+		P("005.02","term");
+			TE("STRING");
+            EOL();
 	}
 	| '[' alternative_list ']' {
-		P("009.03","term");
+		P("005.03","term");
 			OP("[");
 			NT("alternative_list");
-			OP("]");EOL();
-		$$ = new_term_3($2);
+			OP("]");
+            EOL();
 	}
 	| '{' alternative_list '}' {
-		P("009.04","term");
+		P("005.04","term");
 			OP("{");
 			NT("alternative_list");
-			OP("}");EOL();
-		$$ = new_term_4($2);
+			OP("}");
+            EOL();
 	}
 	| '(' alternative_list ')' {
-		P("009.05","term");
+		P("005.05","term");
 			OP("(");
 			NT("alternative_list");
-			OP(")");EOL();
-		$$ = new_term_5($2);
+			OP(")");
+            EOL();
 	}
 	;
 

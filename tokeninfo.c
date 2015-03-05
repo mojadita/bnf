@@ -14,45 +14,57 @@
 
 #include "tokeninfo.h"
 
+#define TABSIZE		4
+#define HOME		1
+#define NLINES		15
+
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 
-static LIST_DECLARE(data);
-static int nlines = NLINES;
-
-void init_tokeninfo(int nl)
+static int ti_cmp(struct ti_item *i1, struct ti_item *i2)
 {
-	LNODE_P p;
-	nlines = nl;
-	while ((p = LIST_FIRST(&data)) != NULL) {
-		struct tokeninfo *t = LIST_ELEMENT(p, struct tokeninfo, node);
-		LIST_DELETE(p);
-		if (t->aut) {
-			free(t->str);
-			free(t);
-		} /* if */
-	} /* while */
+    return strcmp(i1->str, i2->str);
+} /* ti_cmp */
+
+struct ti_db *init_tokeninfo()
+{
+    struct ti_db *res;
+    assert(res = malloc(sizeof(struct ti_db)));
+    res->tokens = new_avl_tree(
+            (AVL_FCOMP)ti_cmp, /* fcomp */
+            NULL, /* fcons */
+            NULL, /* fdest */
+            NULL); /* fprnt */
+    LIST_INIT(&res->input_list);
+    res->tab_size = TABSIZE;
+    res->n_lines = NLINES;
 } /* init_tokeninfo */
 
-struct tokeninfo* add_tokeninfo(const char* s, int l, int c, int len, int aut)
+struct tokeninfo* add_tokeninfo(
+        struct ti_db *gd,
+        const char* s,
+        int typ,
+        int l,
+        int c)
 {
 	LNODE_P p;
-	struct tokeninfo* res;
-	while ((p = LIST_FIRST(&data)) != NULL) {
-		struct tokeninfo* t = LIST_ELEMENT(p, struct tokeninfo, node);
-		if (t->lin >= l - nlines) break;
-		LIST_DELETE(p);
-		if (t->aut) {
-			free(t->str);
-			free(t);
-		} /* if */
-	} /* while */
-	assert(res = malloc(sizeof (struct tokeninfo)));
-	res->str = strdup(s);
+	struct ti_xref *res;
+    struct ti_item *itm;
+    AVL_ITERATOR it;
+
+    itm = avl_tree_get(gd->tokens, s = intern(s));
+    if (!itm) {
+        assert(itm = malloc(sizeof(struct ti_item)));
+        itm->str = s;
+        itm->typ = typ;
+        LIST_INIT(&itm->xrefs);
+    } /* if */
+	assert(res = malloc(sizeof (struct ti_xref)));
+    res->tinfo = itm;
+    res->flags = 0;
 	res->lin = l;
 	res->col = c;
-	res->len = len;
-	res->aut = aut;
-	LIST_APPEND(&data, &res->node);
+	LIST_APPEND(&itm->xrefs, &res->node);
+
 	return res;
 } /* add_tokeninfo */
 
