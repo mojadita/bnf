@@ -23,7 +23,7 @@ AVL_TREE intern_strings = NULL;
 
 const char *intern(const char *s)
 {
-	const char *res;
+	const char *res = "<<invalid>>";
     AVL_ITERATOR i;
 
 	if (!intern_strings) {
@@ -33,7 +33,10 @@ const char *intern(const char *s)
 			(AVL_FDEST) free,
 			(AVL_FPRNT) fputs));
 	} /* if */
-	i = avl_tree_put(intern_strings, s, NULL);
+
+    /* THE FOLLOWING SAVES A ROUNDTRIP TO FIND THE 
+     * KEY AGAIN */
+	i = avl_tree_put(intern_strings, s, res);
     avl_iterator_set_data(i, res = avl_iterator_key(i));
 
 	return res;
