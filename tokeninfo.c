@@ -20,47 +20,48 @@
 
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 
-static int ti_cmp(struct ti_item *i1, struct ti_item *i2)
-{
-    return strcmp(i1->str, i2->str);
-} /* ti_cmp */
-
 struct ti_db *init_tokeninfo()
 {
     struct ti_db *res;
+
     assert(res = malloc(sizeof(struct ti_db)));
     res->tokens = new_avl_tree(
-            (AVL_FCOMP)ti_cmp, /* fcomp */
-            NULL, /* fcons */
-            NULL, /* fdest */
-            NULL); /* fprnt */
+            (AVL_FCOMP) ti_cmp, /* fcomp */
+            (AVL_FCONS) strdup, /* fcons */
+            (AVL_FDEST) free,   /* fdest */
+            (AVL_FPRNT) fputs); /* fprnt */
     LIST_INIT(&res->input_list);
-    res->tab_size = TABSIZE;
-    res->n_lines = NLINES;
+    res->tab_size   = TABSIZE;
+    res->home       = HOME;
+    res->n_lines    = NLINES;
+
+    return res;
 } /* init_tokeninfo */
 
 struct tokeninfo* add_tokeninfo(
-        struct ti_db *gd,
-        const char* s,
-        int typ,
-        int l,
-        int c)
+        struct ti_db    *gd,   /* global database */
+        const char      *s,    /* string of token */
+        int             typ,   /* type of token */
+        int             l,     /* line */
+        int             c)     /* column */
 {
-	LNODE_P p;
-	struct ti_xref *res;
-    struct ti_item *itm;
-    AVL_ITERATOR it;
+	LNODE_P             p;
+	struct ti_xref      *res;
+    struct ti_item      *itm;
+    AVL_ITERATOR        it;
 
-    itm = avl_tree_get(gd->tokens, s = intern(s));
+    itm = avl_tree_get(gd->tokens, s);
     if (!itm) {
+        AVL_ITERATOR it;
         assert(itm = malloc(sizeof(struct ti_item)));
-        itm->str = s;
+        it = avl_tree_put(gd->tokens, s, itm);
+        itm->str = avl_iterator_key(it);
         itm->typ = typ;
         LIST_INIT(&itm->xrefs);
     } /* if */
 	assert(res = malloc(sizeof (struct ti_xref)));
     res->tinfo = itm;
-    res->flags = 0;
+    res->flags = 0; /* no flags at initialization, after... */
 	res->lin = l;
 	res->col = c;
 	LIST_APPEND(&itm->xrefs, &res->node);
@@ -70,16 +71,15 @@ struct tokeninfo* add_tokeninfo(
 
 size_t vfprint_tokeninfo(FILE* o, const char *fmt, va_list p)
 {
-	int lin = 0;
-	int col = HOME;
-	struct tokeninfo* t;
-	size_t res = 0;
-	int has_print_something = 0;
-	char buff[20];
-	int ndig = snprintf(buff, sizeof buff, "%d",
-			LIST_ELEMENT(LIST_LAST(&data),
-				struct tokeninfo,
-				node)->lin);
+	int                 lin = 0;
+	int                 col = HOME;
+	struct tokeninfo    *t  = NULL;
+	size_t              res = 0;
+	int                 has_print_something
+                            = 0;
+	char                buff[20];
+	int                 ndig = snprintf(buff, sizeof buff, "%d",
+			LIST_ELEMENT(LIST_LAST(&data), struct tokeninfo, node)->lin);
 
 	LIST_FOREACH_ELEMENT(t, &data, struct tokeninfo, node) {
 		if (!lin) {

@@ -30,57 +30,58 @@ static char TOKENINFO_H_RCSId[] = "\n$Id: tokeninfo.h,v 1.2 2012/08/22 13:41:14 
  */
 
 struct ti_db {
-    AVL_TREE        tokens; /* items in database */
+    AVL_TREE        tokens;     /* items in database */
     LNODE_T         input_list; /* input list */
-    int             tab_size; /* tab size to compute tab positions */
-    int             n_lines; /* number of lines of previous context printed */
+    int             tab_size;   /* tab size to compute tab positions */
+    int             home;       /* position of the home column */
+    int             n_lines;    /* number of lines of previous context printed */
 };
 
 struct ti_item {
-	char*			str; /* token string */
-	LNODE_T			xrefs; /* to link input tokens */
-    int             typ; /* token type */
+	char*			str;        /* token string */
+	LNODE_T			xrefs;      /* to link input tokens */
+    int             typ;        /* token type */
 };
 
 #define TI_DEFINED_HERE  (1 << 0) /* place of definition */
 
 struct ti_xref {
-    struct ti_info  *tinfo; /* reference to token class */
-    int             flags; /* flags, see above */
-    int             lin; /* line where this xref appears */
-    int             col; /* column where this xref begins */
-    LNODE_T         node; /* input list links */
+    struct ti_info  *tinfo;     /* reference to token class */
+    int             flags;      /* flags, see above */
+    int             lin;        /* line where this xref appears */
+    int             col;        /* column where this xref begins */
+    LNODE_T         node;       /* input list links */
 };
 
 struct ti_db *init_tokeninfo();
 
 struct ti_xref *add_tokeninfo(
-        struct ti_db *d, /* global tokeninfo database */
-		const char* s, /* token string. */
-        int typ, /* token type */
-		int l, /* line of token */
-		int c); /* column of token */
+        struct ti_db    *d,     /* global tokeninfo database */
+		const char      *s,     /* token string. */
+        int             typ,    /* token type */
+		int             l,      /* line of token */
+		int             c);     /* column of token */
 
 size_t vfprint_tokeninfo(
-		FILE* o, /* ouput file */
-		const char *fmt, /* format string of error line. */
-		va_list p); /* variable argument list */
+		FILE            *o,     /* ouput file */
+		const char      *fmt,   /* format string of error line. */
+		va_list         p);     /* variable argument list */
 
 size_t vprint_tokeninfo(
-		const char *fmt, /* format string */
-		va_list p); /* variable argument list */
+		const char      *fmt,   /* format string */
+		va_list         p);     /* variable argument list */
 
 size_t fprint_tokeninfo(
-        FILE* o, /* output file */
-		const char *fmt, /* format string */
-		...);
+        FILE            *o,     /* output file */
+		const char      *fmt,   /* format string */
+		                ...);   /* ... */
 
 size_t print_tokeninfo(
-		const char* fmt, /* format string */
-		...);
+		const char      *fmt,   /* format string */
+		                ...);
 
 size_t xref_tokeninfo(
-        FILE *o); /* output file */
+        FILE            *o); /* output file */
 
 #endif /* TOKENINFO_H */
 
