@@ -24,10 +24,16 @@
 #define TRUE			!(FALSE)
 #endif
 
+#ifndef HOME
+#define HOME		    1
+#endif
+
 static char BNF_SPARSER_L_RCSId[] = "\n$Id: bnf_sparser.l,v 1.6 2012/09/21 18:13:55 luis Exp $\n";
 
 int						yycolno = HOME;
 int						yylevel = 0;
+
+struct ti_db            *tokeninfo_db = NULL;
 
 static char*			esc1 = "\e[1;44m";
 static char*			esc2 = "\e[0m";
@@ -44,10 +50,16 @@ static char*			esc6 = "\e[0m";
 	esc1, esc2, esc3, esc4, esc5, \
 	yytext, esc6)
 
-#define ACT() yycolno += yyleng
+#define ACT() do { yycolno += yyleng; } while (0)
 
-#define ADD(autodel) yylval.tokeninfo = \
-	add_tokeninfo(yytext, yylineno, yycolno, yyleng, autodel);
+#define ADD(typ) do { \
+        yylval.tokeninfo = add_tokeninfo( \
+            tokeninfo_db, \
+            yytext,   \
+            typ,  \
+            yylineno, \
+            yycolno); \
+    } while (0)
 
 %}
 
@@ -63,21 +75,33 @@ com						("--".*)
 
 %%
 
-" "*		{										ACT(); }
-"\t"		{	yycolno -= (yycolno-HOME) % TABSIZE; yycolno += TABSIZE; }
+" "*		{									ACT(); }
+"\t"		{	yycolno -= (yycolno-HOME)
+                    % tokeninfo_db->tab_size;
+                yycolno += tokeninfo_db->tab_size;
+            }
 "\n"		{	yycolno = HOME; }
 
-"::="		{	ADD(TRUE); TRACE(COLON_COLON_EQ);	ACT(); return(COLON_COLON_EQ); }
+"::="		{	ADD(COLON_COLON_EQ);
+                                TRACE(COLON_COLON_EQ);
+                                                ACT(); return(COLON_COLON_EQ); }
 
-{ident}		{	ADD(FALSE);	TRACE(IDENT);			ACT(); return(IDENT); }
-{chr}		{	ADD(FALSE);	TRACE(STRING);			ACT(); return(STRING); }
-{chr2}		{	ADD(FALSE);	TRACE(STRING);			ACT(); return(UNTERMINATED_STRING); }
-{str}		{	ADD(FALSE);	TRACE(STRING);			ACT(); return(STRING); }
-{str2}		{	ADD(FALSE);	TRACE(STRING);			ACT(); return(UNTERMINATED_STRING); }
-.			{	ADD(FALSE);	TRACE(SYMBOL);			ACT(); return(SYMBOL); }
-{com}$		{	ADD(TRUE);	TRACE(COMMENT);			ACT(); }
+{ident}		{	ADD(IDENT);     TRACE(IDENT);	ACT(); return(IDENT); }
+{chr}		{	ADD(STRING);    TRACE(STRING);	ACT(); return(STRING); }
+{chr2}		{	ADD(UNTERMINATED_STRING);
+                                TRACE(STRING);	ACT(); return(UNTERMINATED_STRING); }
+{str}		{	ADD(STRING);    TRACE(STRING);	ACT(); return(STRING); }
+{str2}		{	ADD(UNTERMINATED_STRING);
+                                TRACE(STRING);  ACT(); return(UNTERMINATED_STRING); }
+.			{	ADD(SYMBOL);    TRACE(SYMBOL);	ACT(); return(SYMBOL); }
+{com}$		{	ADD(COMMENT);   TRACE(COMMENT);	ACT(); }
 
 %%
+
+void do_lex_init(void)
+{
+    tokeninfo_db = init_tokeninfo();
+} /* do_lex_init */
 
 void do_lex_nocolor(void)
 {

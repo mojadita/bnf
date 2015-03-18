@@ -93,8 +93,8 @@ static int nerr = 0;
 
 %}
 
-%token	_SYMBOL _TOKEN _GOAL
 %token	COLON_COLON_EQ
+%token  COMMENT
 
 /*
 %type	<grammar>					grammar
@@ -116,7 +116,7 @@ static int nerr = 0;
 	struct alternative*				alternative;
 	struct term_list*				term_list;
 	struct term*					term;
-	struct tokeninfo*				tokeninfo;
+	struct ti_xref*				    tokeninfo;
 } /* union */
 
 %%
@@ -213,6 +213,7 @@ term:
 
 %%
 
+#if 0
 struct grammar* new_grammar(
 		struct rule_list*						lr)
 {
@@ -816,6 +817,7 @@ void pass_term(
 	} /* switch */
 	if (f_post) f_post(pass, POSTORDER, T_TERM, n, arg);
 } /* pass_term */
+#endif
 
 int yyerror(char *s)
 {

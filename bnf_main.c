@@ -114,6 +114,8 @@ int main(int argc, char **argv)
 		yyrestart(f);
 	} /* if */
 
+    do_lex_init();
+
 	if (flags & FLAG_NOCOLOR) {
 		do_lex_nocolor();
 		do_yacc_nocolor();

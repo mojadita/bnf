@@ -20,18 +20,18 @@
 
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 
-struct ti_db *init_tokeninfo()
+struct ti_db *init_tokeninfo(struct ti_db *res)
 {
-    struct ti_db *res;
+    if (!res) assert(res = malloc(sizeof(struct ti_db)));
 
-    assert(res = malloc(sizeof(struct ti_db)));
-    res->tokens = new_avl_tree(
+    /* initialize fields */
+    res->tokens = new_avl_tree( /* token database */
             (AVL_FCOMP) ti_cmp, /* fcomp */
             (AVL_FCONS) strdup, /* fcons */
             (AVL_FDEST) free,   /* fdest */
             (AVL_FPRNT) fputs); /* fprnt */
-    LIST_INIT(&res->input_list);
-    res->tab_size   = TABSIZE;
+    LIST_INIT(&res->input_list); /* token references list */
+    res->tab_size   = TABSIZE; /* fields for printing */
     res->home       = HOME;
     res->n_lines    = NLINES;
 

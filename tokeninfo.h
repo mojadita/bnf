@@ -53,7 +53,7 @@ struct ti_xref {
     LNODE_T         node;       /* input list links */
 };
 
-struct ti_db *init_tokeninfo();
+struct ti_db *init_tokeninfo(struct ti_db *o);
 
 struct ti_xref *add_tokeninfo(
         struct ti_db    *d,     /* global tokeninfo database */
@@ -63,24 +63,29 @@ struct ti_xref *add_tokeninfo(
 		int             c);     /* column of token */
 
 size_t vfprint_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
 		FILE            *o,     /* ouput file */
 		const char      *fmt,   /* format string of error line. */
 		va_list         p);     /* variable argument list */
 
 size_t vprint_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
 		const char      *fmt,   /* format string */
 		va_list         p);     /* variable argument list */
 
 size_t fprint_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
         FILE            *o,     /* output file */
 		const char      *fmt,   /* format string */
 		                ...);   /* ... */
 
 size_t print_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
 		const char      *fmt,   /* format string */
 		                ...);
 
 size_t xref_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
         FILE            *o); /* output file */
 
 #endif /* TOKENINFO_H */
