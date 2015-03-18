@@ -15,9 +15,6 @@
 #include <avl.h>
 #include "lists.h"
 
-
-static char TOKENINFO_H_RCSId[] = "\n$Id: tokeninfo.h,v 1.2 2012/08/22 13:41:14 luis Exp $\n";
-
 /* tokeninfo database is compound of a group of
  * struct ti_info tokens for each token type.
  * each time it appears in source file, a

@@ -5,16 +5,21 @@
 # Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 
 targets = bnf
+ut_targets = $(foreach t,$(targets),$(foreach u,$($(t)_objs),$(u:.o=_ut)))
 
-.PHONY: all clean
+.PHONY: all clean ut
 
-all: $(targets)
+all: $(targets) $(ut_targets)
 clean:
 	$(RM)	$(targets) \
 		$(tstavl_objs) \
 		$(bnf_objs) \
 		bnf_pparser.c \
 		bnf_pparser.h
+
+ut:
+	$(MAKE) $(ut_targets)
+	echo $(ut_targets)
 
 avl.o: avl.h
 
