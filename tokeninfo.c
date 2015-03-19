@@ -26,7 +26,7 @@ struct ti_db *init_tokeninfo(struct ti_db *res)
 
     /* initialize fields */
     res->tokens = new_avl_tree( /* token database */
-            (AVL_FCOMP) ti_cmp, /* fcomp */
+            (AVL_FCOMP) strcmp, /* fcomp */
             (AVL_FCONS) strdup, /* fcons */
             (AVL_FDEST) free,   /* fdest */
             (AVL_FPRNT) fputs); /* fprnt */
@@ -38,7 +38,7 @@ struct ti_db *init_tokeninfo(struct ti_db *res)
     return res;
 } /* init_tokeninfo */
 
-struct tokeninfo* add_tokeninfo(
+struct ti_xref* add_tokeninfo(
         struct ti_db    *gd,   /* global database */
         const char      *s,    /* string of token */
         int             typ,   /* type of token */
@@ -55,7 +55,7 @@ struct tokeninfo* add_tokeninfo(
         AVL_ITERATOR it;
         assert(itm = malloc(sizeof(struct ti_item)));
         it = avl_tree_put(gd->tokens, s, itm);
-        itm->str = avl_iterator_key(it);
+        itm->str = (const char *) avl_iterator_key(it);
         itm->typ = typ;
         LIST_INIT(&itm->xrefs);
     } /* if */
@@ -69,7 +69,11 @@ struct tokeninfo* add_tokeninfo(
 	return res;
 } /* add_tokeninfo */
 
-size_t vfprint_tokeninfo(FILE* o, const char *fmt, va_list p)
+size_t vfprint_tokeninfo(
+        struct ti_db    *db,
+        FILE            *o,
+        const char      *fmt,
+        va_list         p)
 {
 	int                 lin = 0;
 	int                 col = HOME;
@@ -79,9 +83,9 @@ size_t vfprint_tokeninfo(FILE* o, const char *fmt, va_list p)
                             = 0;
 	char                buff[20];
 	int                 ndig = snprintf(buff, sizeof buff, "%d",
-			LIST_ELEMENT(LIST_LAST(&data), struct tokeninfo, node)->lin);
+			LIST_ELEMENT(LIST_LAST(&db->input_list), struct ti_xref, node)->lin);
 
-	LIST_FOREACH_ELEMENT(t, &data, struct tokeninfo, node) {
+	LIST_FOREACH_ELEMENT(t, &data, struct ti_xref, node) {
 		if (!lin) {
 			lin = t->lin;
 			res += fprintf(o, "%0*d: ", ndig, lin);
@@ -112,7 +116,10 @@ size_t vfprint_tokeninfo(FILE* o, const char *fmt, va_list p)
 	} /* if */
 } /* vfprint_tokeninfo */
 
-size_t vprint_tokeninfo(const char *fmt, va_list p)
+size_t vprint_tokeninfo(
+        struct ti_db    *db,
+        const char *fmt,
+        va_list p)
 {
 	vfprint_tokeninfo(stdout, fmt, p);
 } /* vprint_tokeninfo */

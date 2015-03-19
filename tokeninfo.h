@@ -35,7 +35,7 @@ struct ti_db {
 };
 
 struct ti_item {
-	char*			str;        /* token string */
+	const char*		str;        /* token string */
 	LNODE_T			xrefs;      /* to link input tokens */
     int             typ;        /* token type */
 };
@@ -43,7 +43,7 @@ struct ti_item {
 #define TI_DEFINED_HERE  (1 << 0) /* place of definition */
 
 struct ti_xref {
-    struct ti_info  *tinfo;     /* reference to token class */
+    struct ti_item  *tinfo;     /* reference to token class */
     int             flags;      /* flags, see above */
     int             lin;        /* line where this xref appears */
     int             col;        /* column where this xref begins */
