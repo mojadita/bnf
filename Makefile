@@ -7,6 +7,8 @@
 targets = bnf
 ut_targets = $(foreach t,$(targets),$(foreach u,$($(t)_objs),$(u:.o=_ut)))
 
+CFLAGS += -g3 -O0
+
 .PHONY: all clean ut
 
 all: $(targets) $(ut_targets)
@@ -39,7 +41,7 @@ bnf: $(bnf_objs)
 
 bnf_pparser.o: bnf_tabsim.h tokeninfo.h bnf_main.h pass1.h
 bnf_sparser.o: bnf_pparser.h tokeninfo.h bnf_main.h bnf_sparser.h
-tokeninfo.o: tokeninfo.h
+tokeninfo.o: tokeninfo.h lists.h
 bnf_main.o: bnf_tabsim.h tokeninfo.h bnf_sparser.h bnf_main.h pass1.h print_symbols.h print_strtable.h
 print_symbols.o: print_symbols.h
 print_strtable.o: print_strtable.h

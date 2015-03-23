@@ -12,6 +12,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "bnf.h"
 #include "tokeninfo.h"
 
 #define TABSIZE		4
@@ -50,16 +51,18 @@ struct ti_xref* add_tokeninfo(
 	struct ti_xref      *res;
     struct ti_item      *itm;
 
+    printf(D("s=[%s], typ=<%d>, l=%d, c=%d\n"), s, typ, l, c);
     assert(gd);
     itm = avl_tree_get(gd->tokens, s);
     if (!itm) { /* it doesn't exist */
         AVL_ITERATOR it;
 
         assert(itm = malloc(sizeof(struct ti_item)));
+        printf(D("[%s] not present, creating...\n"), s);
         it = avl_tree_put(gd->tokens, s, itm);
         itm->db = gd;
         itm->str = (const char *) avl_iterator_key(it);
-        itm->len = strlen(s);
+        itm->len = strlen(itm->str);
         LIST_INIT(&itm->xrefs_list);
         itm->typ = typ;
     } /* if */
@@ -70,16 +73,18 @@ struct ti_xref* add_tokeninfo(
     res->flags = 0; /* no flags at initialization, after... */
 	res->lin = l;
 	res->col = c;
-	LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
     LIST_APPEND(&gd->input_list, &res->input_node);
+	LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
 
     /* advance the pointer to the first printable xref, if
      * necessary */
     if (!gd->fpx) {
         gd->fpx = res; /* first xref */
     } else {
+#if 0
         while (gd->fpx && gd->fpx->lin + gd->n_lines < l)
             gd->fpx = LIST_ELEMENT_NEXT(gd->fpx, struct ti_xref, input_node);
+#endif
     } /* if */
 
 	return res;
@@ -145,16 +150,16 @@ size_t vfprint_tokeninfo(
 
 size_t vprint_tokeninfo(
         struct ti_db    *db,
-        const char *fmt,
-        va_list p)
+        const char      *fmt,
+        va_list         p)
 {
 	vfprint_tokeninfo(db, stdout, fmt, p);
 } /* vprint_tokeninfo */
 
 size_t fprint_tokeninfo(
-        struct ti_db *db,
-        FILE* o,
-        const char *fmt,
+        struct ti_db    *db,
+        FILE            *o,
+        const char      *fmt,
         ...)
 {
 	va_list p;
@@ -164,8 +169,8 @@ size_t fprint_tokeninfo(
 } /* fprint_tokeninfo */
 
 size_t print_tokeninfo(
-        struct ti_db *db,
-        const char* fmt,
+        struct ti_db    *db,
+        const char      *fmt,
         ...)
 {
 	va_list p;
@@ -173,5 +178,35 @@ size_t print_tokeninfo(
 	vprint_tokeninfo(db, fmt, p);
 	va_end(p);
 } /* print_tokeninfo */
+
+size_t xref_tokeninfo(
+        struct ti_db    *db,    /* tokeninfo db. */
+        FILE            *o)     /* output file */
+{
+    size_t res = 0;
+    assert(db);
+    AVL_ITERATOR i;
+
+    for (   i = avl_tree_first(db->tokens);
+            i;
+            i = avl_iterator_next(i))
+    {
+        struct ti_item *p = (struct ti_item *) avl_iterator_data(i);
+        struct ti_xref *x;
+        int i = 0;
+
+        res += fprintf(o, "%s", (const char *)avl_iterator_key(i));
+        LIST_FOREACH_ELEMENT(x, &p->xrefs_list, struct ti_xref, xrefs_node) {
+            res += fprintf(o, "%s%s<%d,%d>",
+                    i++ ? ", " : ": ", 
+                    x->flags & TI_DEFINED_HERE ? "*" : "",
+                    x->lin, x->col);
+        } /* LIST_FOREACH_ELEMENT */
+        res += fprintf(o, "\n");
+    } /* for */
+    avl_tree_print(db->tokens, o);
+
+    return res;
+} /* xref_tokeninfo */
 
 /* $Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $ */

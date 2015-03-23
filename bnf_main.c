@@ -51,11 +51,11 @@ int main(int argc, char **argv)
 {
 	int opt, res;
 
-	tab_noterminales = new_avl_tree(strcmp, NULL, NULL, NULL);
-	tab_terminales = new_avl_tree(strcmp, NULL, NULL, NULL);
-	token2symbol = new_avl_tree(strcmp, NULL, NULL, NULL);
-	symbol2token = new_avl_tree(strcmp, NULL, NULL, NULL);
-	tab_subtrees = new_avl_tree(strcmp, NULL, NULL, NULL);
+	tab_noterminales = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
+	tab_terminales = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
+	token2symbol = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
+	symbol2token = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
+	tab_subtrees = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
 
 	while ((opt = getopt(argc, argv, "vd:ntCm:""x::X::h::c::y::")) != EOF) {
 		switch(opt) {
@@ -122,6 +122,8 @@ int main(int argc, char **argv)
 	} /* if */
 
 	res = yyparse();
+
+    xref_tokeninfo(tokeninfo_db, stdout);
 
 #if 0
 	if (res == 0) {
