@@ -16,6 +16,7 @@
 
 #include "bnf_tabsim.h"
 #include "tokeninfo.h"
+#include "bnf.h"
 #include "bnf_main.h"
 #include "pass1.h"
 
@@ -822,7 +823,7 @@ void pass_term(
 int yyerror(char *s)
 {
 	if (nerr) fputs("\n", stderr);
-	fprint_tokeninfo(stderr, "ERROR: %s\n", s);
+	fprint_tokeninfo(NULL, stderr, "ERROR: %s\n", s);
 	nerr++;
 } /* yyerror */
 

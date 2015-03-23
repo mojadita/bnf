@@ -100,7 +100,7 @@ com						("--".*)
 
 void do_lex_init(void)
 {
-    tokeninfo_db = init_tokeninfo();
+    tokeninfo_db = init_tokeninfo(NULL);
 } /* do_lex_init */
 
 void do_lex_nocolor(void)

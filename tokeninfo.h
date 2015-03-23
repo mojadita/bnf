@@ -32,22 +32,26 @@ struct ti_db {
     int             tab_size;   /* tab size to compute tab positions */
     int             home;       /* position of the home column */
     int             n_lines;    /* number of lines of previous context printed */
+    struct ti_xref  *fpx;       /* first printable xref */
 };
 
 struct ti_item {
+    struct ti_db    *db;        /* db this item belongs to */
 	const char*		str;        /* token string */
-	LNODE_T			xrefs;      /* to link input tokens */
+    size_t          len;
+	LNODE_T			xrefs_list;      /* to link input tokens */
     int             typ;        /* token type */
 };
 
 #define TI_DEFINED_HERE  (1 << 0) /* place of definition */
 
 struct ti_xref {
-    struct ti_item  *tinfo;     /* reference to token class */
+    struct ti_item  *tinfo;     /* reference to item */
     int             flags;      /* flags, see above */
     int             lin;        /* line where this xref appears */
     int             col;        /* column where this xref begins */
-    LNODE_T         node;       /* input list links */
+    LNODE_T         input_node; /* input list links */
+    LNODE_T         xrefs_node; /* input list links */
 };
 
 struct ti_db *init_tokeninfo(struct ti_db *o);
@@ -83,7 +87,7 @@ size_t print_tokeninfo(
 
 size_t xref_tokeninfo(
         struct ti_db    *db,    /* tokeninfo db. */
-        FILE            *o); /* output file */
+        FILE            *o);    /* output file */
 
 #endif /* TOKENINFO_H */
 

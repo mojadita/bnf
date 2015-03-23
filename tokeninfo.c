@@ -25,15 +25,16 @@ struct ti_db *init_tokeninfo(struct ti_db *res)
     if (!res) assert(res = malloc(sizeof(struct ti_db)));
 
     /* initialize fields */
-    res->tokens = new_avl_tree( /* token database */
-            (AVL_FCOMP) strcmp, /* fcomp */
-            (AVL_FCONS) strdup, /* fcons */
-            (AVL_FDEST) free,   /* fdest */
-            (AVL_FPRNT) fputs); /* fprnt */
+    res->tokens = new_avl_tree(  /* token database */
+            (AVL_FCOMP) strcmp,  /* fcomp */
+            (AVL_FCONS) strdup,  /* fcons */
+            (AVL_FDEST) free,    /* fdest */
+            (AVL_FPRNT) fputs);  /* fprnt */
     LIST_INIT(&res->input_list); /* token references list */
-    res->tab_size   = TABSIZE; /* fields for printing */
+    res->tab_size   = TABSIZE;   /* fields for printing */
     res->home       = HOME;
     res->n_lines    = NLINES;
+    res->fpx        = NULL;      /* no first printable xref yet */
 
     return res;
 } /* init_tokeninfo */
@@ -48,23 +49,38 @@ struct ti_xref* add_tokeninfo(
 	LNODE_P             p;
 	struct ti_xref      *res;
     struct ti_item      *itm;
-    AVL_ITERATOR        it;
 
+    assert(gd);
     itm = avl_tree_get(gd->tokens, s);
-    if (!itm) {
+    if (!itm) { /* it doesn't exist */
         AVL_ITERATOR it;
+
         assert(itm = malloc(sizeof(struct ti_item)));
         it = avl_tree_put(gd->tokens, s, itm);
+        itm->db = gd;
         itm->str = (const char *) avl_iterator_key(it);
+        itm->len = strlen(s);
+        LIST_INIT(&itm->xrefs_list);
         itm->typ = typ;
-        LIST_INIT(&itm->xrefs);
     } /* if */
+
+    /* go with res */
 	assert(res = malloc(sizeof (struct ti_xref)));
     res->tinfo = itm;
     res->flags = 0; /* no flags at initialization, after... */
 	res->lin = l;
 	res->col = c;
-	LIST_APPEND(&itm->xrefs, &res->node);
+	LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
+    LIST_APPEND(&gd->input_list, &res->input_node);
+
+    /* advance the pointer to the first printable xref, if
+     * necessary */
+    if (!gd->fpx) {
+        gd->fpx = res; /* first xref */
+    } else {
+        while (gd->fpx && gd->fpx->lin + gd->n_lines < l)
+            gd->fpx = LIST_ELEMENT_NEXT(gd->fpx, struct ti_xref, input_node);
+    } /* if */
 
 	return res;
 } /* add_tokeninfo */
@@ -77,43 +93,54 @@ size_t vfprint_tokeninfo(
 {
 	int                 lin = 0;
 	int                 col = HOME;
-	struct tokeninfo    *t  = NULL;
+	struct ti_xref      *t  = NULL;
 	size_t              res = 0;
 	int                 has_print_something
                             = 0;
 	char                buff[20];
-	int                 ndig = snprintf(buff, sizeof buff, "%d",
-			LIST_ELEMENT(LIST_LAST(&db->input_list), struct ti_xref, node)->lin);
+    struct ti_xref       *l = LIST_ELEMENT_LAST(&db->input_list, struct ti_xref, input_node);
+	int                 ndig = snprintf(buff, sizeof buff, "%d", l ? l->lin : 0);
 
-	LIST_FOREACH_ELEMENT(t, &data, struct ti_xref, node) {
+    assert(db);
+
+    /* print the xrefs elements */
+    for(t = db->fpx;
+        t;
+        t = LIST_ELEMENT_NEXT(t, struct ti_xref, input_node)
+    ) {
 		if (!lin) {
 			lin = t->lin;
 			res += fprintf(o, "%0*d: ", ndig, lin);
-			col = HOME;
+			col = db->home;
 		} else while (lin < t->lin) {
 			res += fprintf(o, "\n%0*d: ", ndig, ++lin);
-			col = HOME;
+			col = db->home;
 		} /* if */
 		res += fprintf(o, "%*s", t->col - col, "");
-		res += fprintf(o, "%s", t->str);
-		col = t->col + t->len;
+		res += fprintf(o, "%s", t->tinfo->str);
+		col = t->col + t->tinfo->len;
 		lin = t->lin;
 		has_print_something = 1;
-	} /* LIST_FOREACH_ELEMENT */
-	t = LIST_ELEMENT(LIST_LAST(&data), struct tokeninfo, node);
-	if (t) {
-		col = HOME;
+	} /* for */
+
+    /* mark the last element */
+	if (l) {
+		col = db->home;
 		res += fprintf(o,
-				"\n%0.*s: %*s%*.*s\n%s> ",
-				ndig, "--------------------",
+				"\n%.*s: %*s%*.*s\n%s> ",
+				ndig, "********************",
 				t->col - col, "",
-				t->len, t->len,
+				(int)t->tinfo->len, (int)t->tinfo->len,
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
 				buff);
 		res += vfprintf(o, fmt, p);
 	} /* if */
+
+    res += fprintf(o, "\n");
+
+    return res;
 } /* vfprint_tokeninfo */
 
 size_t vprint_tokeninfo(
@@ -121,22 +148,29 @@ size_t vprint_tokeninfo(
         const char *fmt,
         va_list p)
 {
-	vfprint_tokeninfo(stdout, fmt, p);
+	vfprint_tokeninfo(db, stdout, fmt, p);
 } /* vprint_tokeninfo */
 
-size_t fprint_tokeninfo(FILE* o, const char *fmt, ...)
+size_t fprint_tokeninfo(
+        struct ti_db *db,
+        FILE* o,
+        const char *fmt,
+        ...)
 {
 	va_list p;
 	va_start(p, fmt);
-	vfprint_tokeninfo(o, fmt, p);
+	vfprint_tokeninfo(db, o, fmt, p);
 	va_end(p);
 } /* fprint_tokeninfo */
 
-size_t print_tokeninfo(const char* fmt, ...)
+size_t print_tokeninfo(
+        struct ti_db *db,
+        const char* fmt,
+        ...)
 {
 	va_list p;
 	va_start(p, fmt);
-	vprint_tokeninfo(fmt, p);
+	vprint_tokeninfo(db, fmt, p);
 	va_end(p);
 } /* print_tokeninfo */
 

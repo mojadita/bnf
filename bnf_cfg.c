@@ -21,7 +21,7 @@ static void init_config(void)
     extern char **environ;
     int i;
 
-    params = new_avl_tree(strcmp);
+    params = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
 
     for(i = 0; environ[i]; i++) {
 	char buffer[256];
@@ -36,7 +36,7 @@ static void init_config(void)
 	    continue;
 	} /* if */
 	l = p++ - environ[i];
-	snprintf(buffer, sizeof buffer, "%0.*s",
+	snprintf(buffer, sizeof buffer, "%.*s",
 		l, environ[i]);
 	avl_tree_put(params, buffer, strdup(p));
     } /* for */

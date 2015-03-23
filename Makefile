@@ -30,9 +30,9 @@ bnf_objs = \
 	bnf_main.o \
 	print_symbols.o \
 	print_strtable.o \
-	bnf_cfg.o \
-	pass0.o pass1.o pass2.o \
-	pass3.o pass4.o
+	bnf_cfg.o 
+	#pass0.o pass1.o pass2.o \
+	#pass3.o pass4.o
 bnf_libs = -lavl
 bnf: $(bnf_objs)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o bnf $(bnf_objs) $(bnf_libs)

@@ -27,49 +27,65 @@
 static char LISTS_H_RCSId[] = "\n$Id: lists.h,v 1.1.1.1 2012/08/20 19:25:31 luis Exp $\n";
 
 #define LISTS_H_PACKAGE_NAME "lists"
-#define LISTS_H_PACKAGE_VERSION "0.3"
-#define LISTS_H_PACKAGE_STRING "lists 0.3"
+#define LISTS_H_PACKAGE_VERSION "0.4"
+#define LISTS_H_PACKAGE_STRING "lists 0.4"
 
 /* constants */
 
 /* types */
 typedef struct LNODE_S {
-		struct LNODE_S *prev;
-		struct LNODE_S *next;
+		struct LNODE_S *p; /* previous element pointer */
+		struct LNODE_S *n; /* next element pointer */
 } LNODE_T, *LNODE_P;
 
 /* definitions */
 #ifndef OFFSETOF
-#define OFFSETOF(X, f) ((int)&(((X *)0)->f))
+#define OFFSETOF(T,f) ((int)&(((T *)0)->f))
 #endif
 
-#define LIST_OFFSET(X, f) ((X *)0)->f
-#define LIST_INIT(X) {(X)->prev = (X)->next = (X);}
-#define LIST_DECLARE(X) LNODE_T X = { .next = &X, .prev = &X }
+#define LIST_INIT(d) do{(d)->p=(d)->n=0;}while(0)
+#define LIST_DECLARE(d) LNODE_T d={0,0}
 
-#define LIST_FIRST(X) (LIST_EMPTY(X) ? NULL : (X)->next)
-#define LIST_LAST(X) (LIST_EMPTY(X) ? NULL : (X)->prev)
-#define LIST_NEXT(X) LIST_FIRST(X)
-#define LIST_PREV(X) LIST_LAST(X)
+#define LIST_FIRST(L) ((L)->n)
+#define LIST_LAST(L) ((L)->p)
+#define LIST_NEXT(d) LIST_FIRST((d))
+#define LIST_PREV(d) LIST_LAST((d))
 
-#define LIST_ATEOL(p, L) ((p)==(L))
-#define LIST_FOREACH(p, L) for(p=(L)->next;p!=(L);p=p->next)
-#define LIST_FORBACK(p, L) for(p=(L)->prev;p!=(L);p=p->prev)
+#define LIST_FOREACH(i,L) for((i)=(L)->n;(i);(i)=(i)->n)
+#define LIST_FORBACK(i,L) for((i)=(L)->p;(i);(i)=(i)->p)
 
-#define LIST_FOREACH_ELEMENT(p,L,T,f) for(p=LIST_ELEMENT((L)->next,T,f);p&&(&p->node!=(L));p=LIST_ELEMENT(p->f.next,T,f))
-#define LIST_FORBACK_ELEMENT(p,L,T,f) for(p=LIST_ELEMENT((L)->prev,T,f);p&&(&p->node!=(L));p=LIST_ELEMENT(p->f.prev,T,f))
+#define LIST_ELEMENT(d,T,f) ((T *)((char *)(d)-OFFSETOF(T,f)))
 
-#define LIST_EMPTY(L) ((L)->next == (L))
+#define LIST_ELEMENT_FIRST(L,T,f)   LIST_ELEMENT(LIST_FIRST((L)),T,f)
+#define LIST_ELEMENT_LAST(L,T,f)    LIST_ELEMENT(LIST_LAST((L)),T,f)
 
-#define LIST_INSERT(L, p) { (p)->next = (L)->next; (p)->prev = (L); (L)->next = (p); (p)->next->prev = (p); }
-#define LIST_APPEND(L, p) { (p)->prev = (L)->prev; (p)->next = (L); (L)->prev = (p); (p)->prev->next = (p); }
-#define LIST_DELETE(p) { (p)->next->prev = (p)->prev; (p)->prev->next = (p)->next; }
+#define LIST_ELEMENT_NEXT(d,T,f) LIST_ELEMENT(LIST_NEXT(&(d)->f),T,f)
+#define LIST_ELEMENT_PREV(d,T,f) LIST_ELEMENT(LIST_PREV(&(d)->f),T,f)
 
-#define LIST_ELEMENT(p, T, f) ((p) ? (T *)((char *)(p) - OFFSETOF(T, f)): NULL)
+#define LIST_FOREACH_ELEMENT(i,L,T,f) \
+    for((i)=LIST_ELEMENT_FIRST((L),T,f);\
+            (i);\
+            (i)=LIST_ELEMENT_NEXT((i),T,f))
+
+#define LIST_FORBACK_ELEMENT(i,L,T,f) \
+    for((i)=LIST_ELEMENT_LAST((L),T,f);\
+            (i);\
+            (i)=LIST_ELEMENT_PREV((i),T,f))
+
+#define LIST_EMPTY(L) (!LIST_FIRST((L)))
+
+#define LIST_INSERT(L,d) do{(d)->n=(L)->n;(d)->p=0;(L)->n=(d);}while(0)
+#define LIST_APPEND(L,d) do{(d)->p=(L)->p;(d)->n=0;(L)->p=(d);}while(0)
+#define LIST_DELETE(L,d) do{\
+            if((L)->n==(d))(L)->n=(d)->n;\
+            if((L)->p==(d))(L)->p=(d)->p;\
+            if((d)->p)(d)->p->n=(d)->n;\
+            if((d)->n)(d)->n->p=(d)->p;\
+        }while(0)
+
 
 #endif /* LISTS_H */
 /* Do not include anything AFTER the line above, as it would not be
  * protected against double inclusion from other files.
  */
-
 /* $Id: lists.h,v 1.1.1.1 2012/08/20 19:25:31 luis Exp $ */

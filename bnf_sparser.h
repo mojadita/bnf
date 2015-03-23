@@ -10,5 +10,7 @@
 
 void do_lex_nocolor(void);
 
+extern struct ti_db *tokeninfo_db;
+
 #endif /* BNF_SPARSER_H */
 /* $Id: bnf_sparser.h,v 1.1 2012/08/27 13:55:31 luis Exp $ */
