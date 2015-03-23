@@ -6,7 +6,7 @@
 --                 All rights reserved.
 
 grammar ::=
-      gramar_rule rule
+      grammar rule
     | rule
     ;
 
@@ -22,10 +22,10 @@ term_list ::= term_list term
 
 
 term ::= IDENT
-	| STRING
-	| '{' alternative_list '}'
-	| '[' alternative_list ']'
-	| '(' alternative_list ')'
-	;
+    | STRING
+    | '{' alternative_list '}'
+    | '[' alternative_list ']'
+    | '(' alternative_list ')'
+    ;
 
 -- $Id: bnf.bnf,v 1.2 2012/09/08 15:58:11 luis Exp $

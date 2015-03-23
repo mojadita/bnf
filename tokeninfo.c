@@ -194,7 +194,7 @@ size_t xref_tokeninfo(
         struct ti_xref *xr;
 
         LIST_FOREACH_ELEMENT(xr, &it->xrefs_list, struct ti_xref, xrefs_node) {
-            res += fprintf(o,"%s:%d:%d: [%s]\n", n, xr->lin, xr->col, it->str);
+            res += fprintf(o,"%s:%d:%d: len=%d [%s]\n", n, xr->lin, xr->col, it->len, it->str);
         } /* LIST_FOREACH_ELEMENT */
     } /* for */
 
