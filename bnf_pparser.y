@@ -19,6 +19,7 @@
 #include "bnf.h"
 #include "bnf_main.h"
 #include "pass1.h"
+#include "bnf_sparser.h"
 
 #ifndef FALSE
 #define FALSE						0
@@ -823,7 +824,7 @@ void pass_term(
 int yyerror(char *s)
 {
 	if (nerr) fputs("\n", stderr);
-	fprint_tokeninfo(NULL, stderr, "ERROR: %s\n", s);
+	fprint_tokeninfo(tokeninfo_db, stderr, "ERROR: %s\n", s);
 	nerr++;
 } /* yyerror */
 

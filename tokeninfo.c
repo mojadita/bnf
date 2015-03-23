@@ -25,16 +25,16 @@ struct ti_db *init_tokeninfo(struct ti_db *res)
     if (!res) assert(res = malloc(sizeof(struct ti_db)));
 
     /* initialize fields */
-    res->tokens = new_avl_tree(  /* token database */
-            (AVL_FCOMP) strcmp,  /* fcomp */
-            (AVL_FCONS) strdup,  /* fcons */
-            (AVL_FDEST) free,    /* fdest */
-            (AVL_FPRNT) fputs);  /* fprnt */
-    LIST_INIT(&res->input_list); /* token references list */
-    res->tab_size   = TABSIZE;   /* fields for printing */
+    assert(res->tokens = new_avl_tree( /* token database */
+            (AVL_FCOMP) strcmp,        /* fcomp */
+            (AVL_FCONS) strdup,        /* fcons */
+            (AVL_FDEST) free,          /* fdest */
+            (AVL_FPRNT) fputs));       /* fprnt */
+    LIST_INIT(&res->input_list);       /* token references list */
+    res->tab_size   = TABSIZE;         /* fields for printing */
     res->home       = HOME;
     res->n_lines    = NLINES;
-    res->fpx        = NULL;      /* no first printable xref yet */
+    res->fpx        = NULL;            /* no first printable xref yet */
 
     return res;
 } /* init_tokeninfo */

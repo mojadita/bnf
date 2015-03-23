@@ -44,11 +44,16 @@ static char*			esc6 = "\e[0m";
 
 #define SYMBOL	yytext[0]
 
-#define TRACE(X) if (flags & FLAG_SCANNER) printf( \
-	"%s:%d:%d: %s" #X "%s %s<=%s \"%s%s%s\"\n", \
-	filename, yylineno, yycolno, \
-	esc1, esc2, esc3, esc4, esc5, \
-	yytext, esc6)
+#define TRACE(X) do {\
+        if (flags & FLAG_SCANNER) {\
+            printf( \
+                "%s:%d:%d: %s" #X "%s %s<=%s \"%s%s%s\"\n", \
+                filename, yylineno, yycolno, \
+                esc1, esc2, esc3, esc4, esc5, \
+                yytext, esc6);\
+            fflush(stdout);\
+        }\
+    }while(0)
 
 #define ACT() do { yycolno += yyleng; } while (0)
 
