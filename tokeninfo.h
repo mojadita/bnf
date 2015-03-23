@@ -87,7 +87,8 @@ size_t print_tokeninfo(
 
 size_t xref_tokeninfo(
         struct ti_db    *db,    /* tokeninfo db. */
-        FILE            *o);    /* output file */
+        FILE            *o,     /* output file */
+        const char      *fn);   /* output filename */
 
 #endif /* TOKENINFO_H */
 

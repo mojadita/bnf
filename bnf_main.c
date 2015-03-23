@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 
 	res = yyparse();
 
-    xref_tokeninfo(tokeninfo_db, stdout);
+    xref_tokeninfo(tokeninfo_db, stdout, filename);
 
 #if 0
 	if (res == 0) {
