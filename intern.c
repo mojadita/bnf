@@ -23,23 +23,23 @@ AVL_TREE intern_strings = NULL;
 
 const char *intern(const char *s)
 {
-	const char *res = "<<invalid>>";
+    const char *res = "<<invalid>>";
     AVL_ITERATOR i;
 
-	if (!intern_strings) {
-		assert(intern_strings = new_avl_tree(
-			(AVL_FCOMP) strcmp,
-			(AVL_FCONS) strdup,
-			(AVL_FDEST) free,
-			(AVL_FPRNT) fputs));
-	} /* if */
+    if (!intern_strings) {
+        assert(intern_strings = new_avl_tree(
+            (AVL_FCOMP) strcmp,
+            (AVL_FCONS) strdup,
+            (AVL_FDEST) free,
+            (AVL_FPRNT) fputs));
+    } /* if */
 
     /* THE FOLLOWING SAVES A ROUNDTRIP TO FIND THE 
      * KEY AGAIN */
-	i = avl_tree_put(intern_strings, s, res);
+    i = avl_tree_put(intern_strings, s, res);
     avl_iterator_set_data(i, res = avl_iterator_key(i));
 
-	return res;
+    return res;
 } /* intern */
-	
+    
 /* $Id: intern.c,v 1.1 2014/09/09 20:22:07 luis Exp $ */

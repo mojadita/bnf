@@ -35,8 +35,8 @@ static char LISTS_H_RCSId[] = "\n$Id: lists.h,v 1.1.1.1 2012/08/20 19:25:31 luis
 
 /* types */
 typedef struct LNODE_S {
-		struct LNODE_S *p; /* previous element pointer */
-		struct LNODE_S *n; /* next element pointer */
+        struct LNODE_S *p; /* previous element pointer */
+        struct LNODE_S *n; /* next element pointer */
 } LNODE_T, *LNODE_P;
 
 /* definitions */

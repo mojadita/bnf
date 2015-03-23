@@ -16,9 +16,9 @@
 #include "bnf.h"
 #include "tokeninfo.h"
 
-#define TABSIZE		4
-#define HOME		1
-#define NLINES		15
+#define TABSIZE     4
+#define HOME        1
+#define NLINES      15
 
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 
@@ -48,8 +48,8 @@ struct ti_xref* add_tokeninfo(
         int             l,     /* line */
         int             c)     /* column */
 {
-	LNODE_P             p;
-	struct ti_xref      *res;
+    LNODE_P             p;
+    struct ti_xref      *res;
     struct ti_item      *itm;
 
     assert(gd);
@@ -67,13 +67,13 @@ struct ti_xref* add_tokeninfo(
     } /* if */
 
     /* go with res */
-	assert(res = malloc(sizeof (struct ti_xref)));
+    assert(res = malloc(sizeof (struct ti_xref)));
     res->tinfo = itm;
     res->flags = 0; /* no flags at initialization, after... */
-	res->lin = l;
-	res->col = c;
+    res->lin = l;
+    res->col = c;
     LIST_APPEND(&gd->input_list, &res->input_node);
-	LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
+    LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
 
     /* advance the pointer to the first printable xref, if
      * necessary */
@@ -84,7 +84,7 @@ struct ti_xref* add_tokeninfo(
             gd->fpx = LIST_ELEMENT_NEXT(gd->fpx, struct ti_xref, input_node);
     } /* if */
 
-	return res;
+    return res;
 } /* add_tokeninfo */
 
 size_t vfprint_tokeninfo(
@@ -93,15 +93,15 @@ size_t vfprint_tokeninfo(
         const char      *fmt,
         va_list         p)
 {
-	int                 lin = 0;
-	int                 col = HOME;
-	struct ti_xref      *t  = NULL;
-	size_t              res = 0;
-	int                 has_print_something
+    int                 lin = 0;
+    int                 col = HOME;
+    struct ti_xref      *t  = NULL;
+    size_t              res = 0;
+    int                 has_print_something
                             = 0;
-	char                buff[20];
+    char                buff[20];
     struct ti_xref       *l = LIST_ELEMENT_LAST(&db->input_list, struct ti_xref, input_node);
-	int                 ndig = snprintf(buff, sizeof buff, "%d", l ? l->lin : 0);
+    int                 ndig = snprintf(buff, sizeof buff, "%d", l ? l->lin : 0);
 
     assert(db);
 
@@ -110,35 +110,35 @@ size_t vfprint_tokeninfo(
         t;
         t = LIST_ELEMENT_NEXT(t, struct ti_xref, input_node)
     ) {
-		if (!lin) {
-			lin = t->lin;
-			res += fprintf(o, "%0*d: ", ndig, lin);
-			col = db->home;
-		} else while (lin < t->lin) {
-			res += fprintf(o, "\n%0*d: ", ndig, ++lin);
-			col = db->home;
-		} /* if */
-		res += fprintf(o, "%*s", t->col - col, "");
-		res += fprintf(o, "%s", t->tinfo->str);
-		col = t->col + t->tinfo->len;
-		lin = t->lin;
-		has_print_something = 1;
-	} /* for */
+        if (!lin) {
+            lin = t->lin;
+            res += fprintf(o, "%0*d: ", ndig, lin);
+            col = db->home;
+        } else while (lin < t->lin) {
+            res += fprintf(o, "\n%0*d: ", ndig, ++lin);
+            col = db->home;
+        } /* if */
+        res += fprintf(o, "%*s", t->col - col, "");
+        res += fprintf(o, "%s", t->tinfo->str);
+        col = t->col + t->tinfo->len;
+        lin = t->lin;
+        has_print_something = 1;
+    } /* for */
 
     /* mark the last element */
-	if (l) {
-		col = db->home;
-		res += fprintf(o,
-				"\n%.*s: %*s%*.*s\n%s> ",
-				ndig, "********************",
-				t->col - col, "",
-				(int)t->tinfo->len, (int)t->tinfo->len,
+    if (l) {
+        col = db->home;
+        res += fprintf(o,
+                "\n%.*s: %*s%*.*s\n%s> ",
+                ndig, "********************",
+                t->col - col, "",
+                (int)t->tinfo->len, (int)t->tinfo->len,
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-				buff);
-		res += vfprintf(o, fmt, p);
-	} /* if */
+                buff);
+        res += vfprintf(o, fmt, p);
+    } /* if */
 
     res += fprintf(o, "\n");
 
@@ -150,7 +150,7 @@ size_t vprint_tokeninfo(
         const char      *fmt,
         va_list         p)
 {
-	vfprint_tokeninfo(db, stdout, fmt, p);
+    vfprint_tokeninfo(db, stdout, fmt, p);
 } /* vprint_tokeninfo */
 
 size_t fprint_tokeninfo(
@@ -159,10 +159,10 @@ size_t fprint_tokeninfo(
         const char      *fmt,
         ...)
 {
-	va_list p;
-	va_start(p, fmt);
-	vfprint_tokeninfo(db, o, fmt, p);
-	va_end(p);
+    va_list p;
+    va_start(p, fmt);
+    vfprint_tokeninfo(db, o, fmt, p);
+    va_end(p);
 } /* fprint_tokeninfo */
 
 size_t print_tokeninfo(
@@ -170,10 +170,10 @@ size_t print_tokeninfo(
         const char      *fmt,
         ...)
 {
-	va_list p;
-	va_start(p, fmt);
-	vprint_tokeninfo(db, fmt, p);
-	va_end(p);
+    va_list p;
+    va_start(p, fmt);
+    vprint_tokeninfo(db, fmt, p);
+    va_end(p);
 } /* print_tokeninfo */
 
 size_t xref_tokeninfo(
