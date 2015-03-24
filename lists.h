@@ -55,7 +55,7 @@ typedef struct LNODE_S {
 #define LIST_FOREACH(i,L) for((i)=(L)->n;(i);(i)=(i)->n)
 #define LIST_FORBACK(i,L) for((i)=(L)->p;(i);(i)=(i)->p)
 
-#define LIST_ELEMENT(d,T,f) ((T *) ((d)? (char *)(d)-OFFSETOF(T,f) : 0))
+#define LIST_ELEMENT(d,T,f) ((T *) ((d)?(char *)(d)-OFFSETOF(T,f):0))
 
 #define LIST_ELEMENT_FIRST(L,T,f)   LIST_ELEMENT(LIST_FIRST((L)),T,f)
 #define LIST_ELEMENT_LAST(L,T,f)    LIST_ELEMENT(LIST_LAST((L)),T,f)
