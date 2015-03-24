@@ -1,18 +1,18 @@
--- $Id: ada95.bnf,v 1.11 2012/09/08 13:52:09 luis Exp $
+-- $Id: ada2012.bnf,v 1.11 2012/09/08 13:52:09 luis Exp $
 -- vim: ts=4 sw=4 ai nu
 -- Author: Luis Colorado <lc@luiscoloradosistemas.com>
 -- Date: Wed Jul 25 14:57:51 CEST 2012
 -- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 --             All rights reserved.
 
-ada95_syntax ::= compilation;
+ada2012_syntax ::= compilation;
 
 --=======================================================================
--- 2.4 NUMERIC LITERALS (page 34)
+-- 2.4 NUMERIC LITERALS (page 15)
 numeric_literal ::= decimal_literal | based_literal ;
 
 --=======================================================================
--- 2.8 Pragmas (page 36)
+-- 2.8 Pragmas (page 18)
 pragma ::=
       { 'pragma' [ '(' pragma_argument_association { ',' pragma_argument_association } ')' ] ';' }
     ;
@@ -20,28 +20,26 @@ pragma ::=
 pragma_argument_association ::=
       [ identifier '=>' ] name
     | [ identifier '=>' ] expression
+    | [ aspect_mark '=>' ] name
+    | [ aspect_mark '=>' ] expression
     ;
 
 --=======================================================================
--- 3.1 DECLARATIONS (page 41)
+-- 3.1 DECLARATIONS (page 21)
 basic_declaration ::=
-      type_declaration
-    | object_declaration
-    | subprogram_declaration
-    | package_declaration
-    | exception_declaration
+      type_declaration           | subtype_declaration
+    | object_declaration         | number_declaration
+    | subprogram_declaration     | abstract_subprogram_declaration
+    | null_procedure_declaration | expression_function_declaration
+    | package_declaration        | renaming_declaration
+    | exception_declaration      | generic_declaration
     | generic_instantiation
-    | subtype_declaration
-    | number_declaration
-    | abstract_subprogram_declaration
-    | renaming_declaration
-    | generic_declaration
     ;
 
 defining_identifier ::= identifier ;
 
 --=======================================================================
--- 3.2.1 Type declarations (page 43)
+-- 3.2.1 Type declarations (page 24)
 type_declaration ::=
       full_type_declaration
     | incomplete_type_declaration
@@ -51,99 +49,85 @@ type_declaration ::=
 
 full_type_declaration ::=
       'type' defining_identifier [ known_discriminant_part ]
-        'is' type_definition ';' pragma
+        'is' type_definition [ aspect_specification ] ';' pragma
     | task_type_declaration
     | protected_type_declaration
     ;
 
 type_definition ::=
-      enumeration_type_definition
-    | integer_type_definition
-    | real_type_definition
-    | array_type_definition
-    | record_type_definition
-    | access_type_definition
-    | derived_type_definition
+      enumeration_type_definition | integer_type_definition
+    | real_type_definition        | array_type_definition
+    | record_type_definition      | access_type_definition
+    | derived_type_definition     | interface_type_definition
     ;
 
 --=======================================================================
--- 3.2.2 Sybtype Declarations (page 45)
+-- 3.2.2 Sybtype Declarations (page 25)
 
 subtype_declaration ::=
-      'subtype' defining_identifier 'is' subtype_indication ';'
+      'subtype' defining_identifier 'is' subtype_indication [ aspect_specification ] ';'
       pragma
     ;
 
-subtype_indication ::=
-      subtype_mark [ constraint ]
-    ;
+subtype_indication ::= [ null_exclusion ] subtype_mark [ constraint ] ;
 
 subtype_mark ::= name ;
 
-constraint ::=
-      scalar_constraint
-    | composite_constraint
-    ;
+constraint ::= scalar_constraint | composite_constraint ;
 
-scalar_constraint ::=
-      range_constraint
-    | digits_constraint
-    | delta_constraint
-    ;
+scalar_constraint ::= range_constraint | digits_constraint | delta_constraint ;
 
-composite_constraint ::=
-      index_constraint
-    | discriminant_constraint
-    ;
+composite_constraint ::= index_constraint | discriminant_constraint ;
 
 --=======================================================================
--- 3.3.1 Object Declarations (page 48)
+-- 3.3.1 Object Declarations (page 31)
 
 object_declaration ::=
       defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
-        subtype_indication [ ':=' expression ] ';' pragma
+        subtype_indication [ ':=' expression ]
+        [ aspect_specification ] ';' pragma
     | defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
-        array_type_definition [ ':=' expression ] ';' pragma
+        access_definition [ ':=' expression ]
+        [ aspect_specification ] ';' pragma
+    | defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
+        array_type_definition [ ':=' expression ]
+        [ aspect_specification ] ';' pragma
     | single_task_declaration
     | single_protected_declaration
     ;
 
-defining_identifier_list ::=
-      defining_identifier { ',' defining_identifier }
-    ;
+defining_identifier_list ::= defining_identifier { ',' defining_identifier } ;
 
 --=======================================================================
--- 3.3.2 Number Declarations (page 50)
+-- 3.3.2 Number Declarations (page 33)
 
-number_declaration ::=
-      defining_identifier_list ':' 'constant' ':=' expression ';'
-      pragma
-    ;
+number_declaration ::= defining_identifier_list ':'
+        'constant' ':=' expression ';' pragma ;
 
 --=======================================================================
--- 3.4 Derived Types and Classes (page 51)
+-- 3.4 Derived Types and Classes (page 34)
 
 derived_type_definition ::=
-      [ 'abstract' ] 'new' subtype_indication [ record_extension_part ]
+      [ 'abstract' ] [ 'limited' ] 'new' subtype_indication
+     [[ 'and' interface_list ] record_extension_part ]
     ;
 
 --=======================================================================
--- 3.5 Scalar Types (page 54)
+-- 3.5 Scalar Types (page 39)
 
 range_constraint ::= 'range' range ;
 
-range ::=
-      range_attribute_reference
-    | simple_expression '..' simple_expression
-    ;
+range ::= range_attribute_reference
+    | simple_expression '..' simple_expression ;
+
+-- TODO: VOY POR AQUÍ.
 
 --=======================================================================
--- 3.5.1 Enumeration Types (page 58)
+-- 3.5.1 Enumeration Types (page 44)
 
 enumeration_type_definition ::=
       '(' enumeration_literal_specification
-        { ',' enumeration_literal_specification } ')'
-    ;
+        { ',' enumeration_literal_specification } ')' ;
 
 enumeration_literal_specification ::=
       defining_identifier
@@ -153,23 +137,20 @@ enumeration_literal_specification ::=
 defining_character_literal ::= character_literal ;
 
 --=======================================================================
--- 3.5.4 Integer Types (page 61)
+-- 3.5.2 Character Types (page 45)
+--=======================================================================
+-- 3.5.3 Boolean Types (page 46)
+--=======================================================================
+-- 3.5.4 Integer Types (page 46)
 
-integer_type_definition ::=
-      signed_integer_type_definition
-    | modular_type_definition
-    ;
+integer_type_definition ::= signed_integer_type_definition | modular_type_definition ;
 
-signed_integer_type_definition ::=
-      'range' simple_expression '..' simple_expression
-    ;
+signed_integer_type_definition ::= 'range' simple_expression '..' simple_expression ;
 
-modular_type_definition ::=
-      'mod' expression
-    ;
+modular_type_definition ::= 'mod' expression ;
 
 --=======================================================================
--- 3.5.6 Real Types (page 64)
+-- 3.5.6 Real Types (page 50)
 
 real_type_definition ::=
       floating_point_definition
@@ -177,7 +158,7 @@ real_type_definition ::=
     ;
 
 --=======================================================================
--- 3.5.7 Floating Point Types (page 65)
+-- 3.5.7 Floating Point Types (page 51)
 
 floating_point_definition ::=
       'digits' expression [ real_range_specification ]
@@ -188,7 +169,7 @@ real_range_specification ::=
     ;
 
 --=======================================================================
--- 3.5.9 Fixed Point Types (page 67)
+-- 3.5.9 Fixed Point Types (page 53)
 
 fixed_point_definition ::=
       ordinary_fixed_point_definition
@@ -206,7 +187,7 @@ decimal_fixed_point_definition ::=
 digits_constraint ::= 'digits' expression [ range_constraint ] ;
 
 --=======================================================================
--- 3.6 Array types (page 70)
+-- 3.6 Array types (page 56)
 
 array_type_definition ::=
       unconstrained_array_definition
@@ -237,7 +218,7 @@ component_definition ::=
     ;
 
 --=======================================================================
--- 3.6.1 Index Constraints and Discrete Ranges (page 72)
+-- 3.6.1 Index Constraints and Discrete Ranges (page 59)
 
 index_constraint ::=
       '(' discrete_range { ',' discrete_range } ')'
@@ -249,7 +230,7 @@ discrete_range ::=
     ;
 
 --=======================================================================
--- 3.7 Discriminants (page 75)
+-- 3.7 Discriminants (page 62)
 
 discriminant_part ::=
       unknown_discriminant_part
@@ -273,7 +254,7 @@ discriminant_specification ::=
 default_expression ::= expression ;
 
 --=======================================================================
--- 3.7.1 Discriminants Constraints (page 78)
+-- 3.7.1 Discriminants Constraints (page 64)
 
 discriminant_constraint ::=
       '(' discriminant_association
@@ -285,7 +266,7 @@ discriminant_association ::=
     ;
 
 --=======================================================================
--- 3.8 Record Types (page 80)
+-- 3.8 Record Types (page 66)
 
 record_type_definition ::=
       [[ 'abstract' ] 'tagged' ] [ 'limited' ] record_definition
@@ -312,7 +293,7 @@ component_declaration ::=
     ;
 
 --=======================================================================
--- 3.8.1 Variant Parts and Discrete Choices (page 82)
+-- 3.8.1 Variant Parts and Discrete Choices (page 68)
 
 variant_part ::=
       'case' direct_name 'is'
@@ -331,14 +312,20 @@ discrete_choice_list ::= discrete_choice { '|' discrete_choice } ;
 discrete_choice ::= expression | discrete_range | 'others' ;
 
 --=======================================================================
--- 3.9.1 Type Extensions (page 86)
+-- 3.9.1 Type Extensions (page 74)
 
 record_extension_part ::=
       'with' record_definition
     ;
 
 --=======================================================================
--- 3.10 Access Types (page 90)
+-- 3.9.3 Abstract Types and Subprograms (page 78)
+
+--=======================================================================
+-- 3.9.4 Interface Types (page 79)
+
+--=======================================================================
+-- 3.10 Access Types (page 82)
 
 access_type_definition ::=
       access_to_object_definition
@@ -359,14 +346,14 @@ access_to_subprogram_definition ::=
 access_definition ::= 'access' subtype_mark ;
 
 --=======================================================================
--- 3.10.1 Incomplete Type Declarations
+-- 3.10.1 Incomplete Type Declarations (page 84)
 
 incomplete_type_declaration ::=
       'type' defining_identifier [ discriminant_part ] ';' pragma
     ;
 
 --=======================================================================
--- 3.11 Declarative Parts (page 97)
+-- 3.11 Declarative Parts (page 93)
 
 declarative_part ::= { declarative_item } ;
 
@@ -391,7 +378,7 @@ proper_body ::=
     ;
 
 --=======================================================================
--- 4.1 Names (page 99)
+-- 4.1 Names (page 95)
 
 name ::=
       direct_name
@@ -420,19 +407,19 @@ explicit_dereference ::= name '.' 'all' ;
 implicit_dereference ::= name ;
 
 --=======================================================================
--- 4.1.1 Indexed Components (page 100)
+-- 4.1.1 Indexed Components (page 96)
 
 indexed_component ::=
       prefix '(' expression { ',' expression } ')'
     ;
 
 --=======================================================================
--- 4.1.2 Slices (page 101)
+-- 4.1.2 Slices (page 97)
 
 slice ::= prefix '(' discrete_range ')' ;
 
 --=======================================================================
--- 4.1.3 Selected Components (page 102)
+-- 4.1.3 Selected Components (page 98)
 
 selected_component ::=
       prefix '.' selector_name
@@ -445,6 +432,7 @@ selector_name ::=
     ;
 
 --=======================================================================
+-- TODO: voy por aquí en la numeración de páginas.
 -- 4.1.4 Attributes (page 103)
 
 attribute_reference ::=
@@ -849,7 +837,7 @@ package_specification ::=
 package_body ::=
       'package' 'body' defining_program_unit_name 'is'
         declarative_part
-    [ 'begin'
+      [ 'begin'
         handled_sequence_of_statements ]
       'end' [[ parent_unit_name '.' ] identifier ] ';' pragma
     ;

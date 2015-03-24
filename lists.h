@@ -26,16 +26,17 @@
 
 static char LISTS_H_RCSId[] = "\n$Id: lists.h,v 1.1.1.1 2012/08/20 19:25:31 luis Exp $\n";
 
-#define LISTS_H_PACKAGE_NAME "lists"
+#define LISTS_H_PACKAGE_NAME    "lists"
 #define LISTS_H_PACKAGE_VERSION "0.4"
-#define LISTS_H_PACKAGE_STRING "lists 0.4"
+#define LISTS_H_PACKAGE_STRING  \
+    LISTS_H_PACKAGE_NAME " " LISTS_H_PACKAGE_VERSION
 
 /* constants */
 
 /* types */
 typedef struct LNODE_S {
-		struct LNODE_S *p; /* previous element pointer */
-		struct LNODE_S *n; /* next element pointer */
+        struct LNODE_S *p; /* previous element pointer */
+        struct LNODE_S *n; /* next element pointer */
 } LNODE_T, *LNODE_P;
 
 /* definitions */
@@ -64,25 +65,41 @@ typedef struct LNODE_S {
 
 #define LIST_FOREACH_ELEMENT(i,L,T,f) \
     for((i)=LIST_ELEMENT_FIRST((L),T,f);\
-            (i);\
+            &(i)->f;\
             (i)=LIST_ELEMENT_NEXT((i),T,f))
 
 #define LIST_FORBACK_ELEMENT(i,L,T,f) \
     for((i)=LIST_ELEMENT_LAST((L),T,f);\
-            (i);\
+            &(i)->f;\
             (i)=LIST_ELEMENT_PREV((i),T,f))
 
 #define LIST_EMPTY(L) (!LIST_FIRST((L)))
 
-#define LIST_INSERT(L,d) do{(d)->n=(L)->n;(d)->p=0;(L)->n=(d);}while(0)
-#define LIST_APPEND(L,d) do{(d)->p=(L)->p;(d)->n=0;(L)->p=(d);}while(0)
-#define LIST_DELETE(L,d) do{\
-            if((L)->n==(d))(L)->n=(d)->n;\
-            if((L)->p==(d))(L)->p=(d)->p;\
-            if((d)->p)(d)->p->n=(d)->n;\
-            if((d)->n)(d)->n->p=(d)->p;\
+#define LIST_INSERT(_L,_d) do{\
+            LNODE_P L=(_L), d=(_d);\
+            if (!L->p) L->p = d;\
+            d->n = L->n;\
+            if (L->n) L->n->p = d;\
+            d->p = 0;\
+            L->n = d;\
         }while(0)
 
+#define LIST_APPEND(_L,_d) do{\
+            LNODE_P L=(_L), d=(_d);\
+            if (!L->n) L->n = d;\
+            d->p = L->p;\
+            if (L->p) L->p->n = d;\
+            d->n = 0;\
+            L->p = d;\
+        }while(0)
+
+#define LIST_DELETE(_L,_d) do{\
+            LNODE_P L=(_L), d=(_d);\
+            if (L->n==d) L->n = d->n;\
+            if (L->p==d) L->p = d->p;\
+            if (d->p) d->p->n = d->n;\
+            if (d->n) d->n->p = d->p;\
+        }while(0)
 
 #endif /* LISTS_H */
 /* Do not include anything AFTER the line above, as it would not be

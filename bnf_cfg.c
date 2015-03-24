@@ -24,21 +24,21 @@ static void init_config(void)
     params = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
 
     for(i = 0; environ[i]; i++) {
-	char buffer[256];
-	char* p = strchr(environ[i], '=');
-	int l;
+        char buffer[256];
+        char* p = strchr(environ[i], '=');
+        int l;
 
-	if (!p) {
-	    fprintf(stderr,
-		    "WARNING: environment variable "
-		    "without equal sign '=' (%s)\n",
-		    environ[i]);
-	    continue;
-	} /* if */
-	l = p++ - environ[i];
-	snprintf(buffer, sizeof buffer, "%.*s",
-		l, environ[i]);
-	avl_tree_put(params, buffer, strdup(p));
+        if (!p) {
+            fprintf(stderr,
+                    "WARNING: environment variable "
+                    "without equal sign '=' (%s)\n",
+                    environ[i]);
+            continue;
+        } /* if */
+        l = p++ - environ[i];
+        snprintf(buffer, sizeof buffer, "%.*s",
+                l, environ[i]);
+        avl_tree_put(params, buffer, strdup(p));
     } /* for */
 } /* init_config */
 
@@ -63,10 +63,10 @@ size_t fprint_config_m4(FILE* o)
 
     if (!params) init_config();
     for (p = avl_tree_first(params); p; p = avl_iterator_next(p)) {
-	res += fprintf(o,
-		"env(`%s', `%s')dnl\n",
-		avl_iterator_key(p),
-		avl_iterator_data(p));
+        res += fprintf(o,
+                "env(`%s', `%s')dnl\n",
+                avl_iterator_key(p),
+                avl_iterator_data(p));
     } /* for */
     return res;
 } /* fprint_config */
