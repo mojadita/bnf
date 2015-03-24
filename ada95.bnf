@@ -5,22 +5,20 @@
 -- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 --             All rights reserved.
 
-ada95_syntax ::= compilation;
+ada95_syntax ::= compilation.
 
 --=======================================================================
 -- 2.4 NUMERIC LITERALS (page 34)
-numeric_literal ::= decimal_literal | based_literal ;
+numeric_literal ::= decimal_literal | based_literal.
 
 --=======================================================================
 -- 2.8 Pragmas (page 36)
 pragma ::=
-      { 'pragma' [ '(' pragma_argument_association { ',' pragma_argument_association } ')' ] ';' }
-    ;
+      { 'pragma' [ '(' pragma_argument_association { ',' pragma_argument_association } ')' ] ';' }.
 
 pragma_argument_association ::=
       [ identifier '=>' ] name
-    | [ identifier '=>' ] expression
-    ;
+    | [ identifier '=>' ] expression.
 
 --=======================================================================
 -- 3.1 DECLARATIONS (page 41)
@@ -35,10 +33,9 @@ basic_declaration ::=
     | number_declaration
     | abstract_subprogram_declaration
     | renaming_declaration
-    | generic_declaration
-    ;
+    | generic_declaration.
 
-defining_identifier ::= identifier ;
+defining_identifier ::= identifier.
 
 --=======================================================================
 -- 3.2.1 Type declarations (page 43)
@@ -46,15 +43,13 @@ type_declaration ::=
       full_type_declaration
     | incomplete_type_declaration
     | private_type_declaration
-    | private_extension_declaration
-    ;
+    | private_extension_declaration.
 
 full_type_declaration ::=
       'type' defining_identifier [ known_discriminant_part ]
         'is' type_definition ';' pragma
     | task_type_declaration
-    | protected_type_declaration
-    ;
+    | protected_type_declaration.
 
 type_definition ::=
       enumeration_type_definition
@@ -63,38 +58,32 @@ type_definition ::=
     | array_type_definition
     | record_type_definition
     | access_type_definition
-    | derived_type_definition
-    ;
+    | derived_type_definition.
 
 --=======================================================================
 -- 3.2.2 Sybtype Declarations (page 45)
 
 subtype_declaration ::=
       'subtype' defining_identifier 'is' subtype_indication ';'
-      pragma
-    ;
+      pragma.
 
 subtype_indication ::=
-      subtype_mark [ constraint ]
-    ;
+      subtype_mark [ constraint ].
 
-subtype_mark ::= name ;
+subtype_mark ::= name.
 
 constraint ::=
       scalar_constraint
-    | composite_constraint
-    ;
+    | composite_constraint.
 
 scalar_constraint ::=
       range_constraint
     | digits_constraint
-    | delta_constraint
-    ;
+    | delta_constraint.
 
 composite_constraint ::=
       index_constraint
-    | discriminant_constraint
-    ;
+    | discriminant_constraint.
 
 --=======================================================================
 -- 3.3.1 Object Declarations (page 48)
@@ -105,211 +94,179 @@ object_declaration ::=
     | defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
         array_type_definition [ ':=' expression ] ';' pragma
     | single_task_declaration
-    | single_protected_declaration
-    ;
+    | single_protected_declaration.
 
 defining_identifier_list ::=
-      defining_identifier { ',' defining_identifier }
-    ;
+      defining_identifier { ',' defining_identifier }.
 
 --=======================================================================
 -- 3.3.2 Number Declarations (page 50)
 
 number_declaration ::=
       defining_identifier_list ':' 'constant' ':=' expression ';'
-      pragma
-    ;
+      pragma.
 
 --=======================================================================
 -- 3.4 Derived Types and Classes (page 51)
 
 derived_type_definition ::=
-      [ 'abstract' ] 'new' subtype_indication [ record_extension_part ]
-    ;
+      [ 'abstract' ] 'new' subtype_indication [ record_extension_part ].
 
 --=======================================================================
 -- 3.5 Scalar Types (page 54)
 
-range_constraint ::= 'range' range ;
+range_constraint ::= 'range' range.
 
 range ::=
       range_attribute_reference
-    | simple_expression '..' simple_expression
-    ;
+    | simple_expression '..' simple_expression.
 
 --=======================================================================
 -- 3.5.1 Enumeration Types (page 58)
 
 enumeration_type_definition ::=
       '(' enumeration_literal_specification
-        { ',' enumeration_literal_specification } ')'
-    ;
+        { ',' enumeration_literal_specification } ')'.
 
 enumeration_literal_specification ::=
       defining_identifier
-    | defining_character_literal
-    ;
+    | defining_character_literal.
 
-defining_character_literal ::= character_literal ;
+defining_character_literal ::= character_literal.
 
 --=======================================================================
 -- 3.5.4 Integer Types (page 61)
 
 integer_type_definition ::=
       signed_integer_type_definition
-    | modular_type_definition
-    ;
+    | modular_type_definition.
 
 signed_integer_type_definition ::=
-      'range' simple_expression '..' simple_expression
-    ;
+      'range' simple_expression '..' simple_expression.
 
 modular_type_definition ::=
-      'mod' expression
-    ;
+      'mod' expression.
 
 --=======================================================================
 -- 3.5.6 Real Types (page 64)
 
 real_type_definition ::=
       floating_point_definition
-    | fixed_point_definition
-    ;
+    | fixed_point_definition.
 
 --=======================================================================
 -- 3.5.7 Floating Point Types (page 65)
 
 floating_point_definition ::=
-      'digits' expression [ real_range_specification ]
-    ;
+      'digits' expression [ real_range_specification ].
 
 real_range_specification ::=
-      'range' simple_expression '..' simple_expression
-    ;
+      'range' simple_expression '..' simple_expression.
 
 --=======================================================================
 -- 3.5.9 Fixed Point Types (page 67)
 
 fixed_point_definition ::=
       ordinary_fixed_point_definition
-    | decimal_fixed_point_definition
-    ;
+    | decimal_fixed_point_definition.
 
 ordinary_fixed_point_definition ::=
-      'delta' expression real_range_specification
-    ;
+      'delta' expression real_range_specification.
 
 decimal_fixed_point_definition ::=
-      'delta' expression 'digits' expression [ real_range_specification ]
-    ;
+      'delta' expression 'digits' expression [ real_range_specification ].
 
-digits_constraint ::= 'digits' expression [ range_constraint ] ;
+digits_constraint ::= 'digits' expression [ range_constraint ].
 
 --=======================================================================
 -- 3.6 Array types (page 70)
 
 array_type_definition ::=
       unconstrained_array_definition
-    | constrained_array_definition
-    ;
+    | constrained_array_definition.
 
 unconstrained_array_definition ::=
       'array' '(' index_subtype_definition
             { ',' index_subtype_definition } ')'
-        'of' component_definition
-    ;
+        'of' component_definition.
 
-index_subtype_definition ::= subtype_mark 'range' '<>' ;
+index_subtype_definition ::= subtype_mark 'range' '<>'.
 
 constrained_array_definition ::=
       'array' '(' discrete_subtype_definition
             { ',' discrete_subtype_definition } ')'
-        'of' component_definition
-    ;
+        'of' component_definition.
 
 discrete_subtype_definition ::=
       subtype_indication
-    | range
-    ;
+    | range.
 
 component_definition ::=
-      [ 'aliased' ] subtype_indication
-    ;
+      [ 'aliased' ] subtype_indication.
 
 --=======================================================================
 -- 3.6.1 Index Constraints and Discrete Ranges (page 72)
 
 index_constraint ::=
-      '(' discrete_range { ',' discrete_range } ')'
-    ;
+      '(' discrete_range { ',' discrete_range } ')'.
 
 discrete_range ::=
       subtype_indication
-    | range
-    ;
+    | range.
 
 --=======================================================================
 -- 3.7 Discriminants (page 75)
 
 discriminant_part ::=
       unknown_discriminant_part
-    | known_discriminant_part
-    ;
+    | known_discriminant_part.
 
-unknown_discriminant_part ::= '(' '<>' ')' ;
+unknown_discriminant_part ::= '(' '<>' ')'.
 
 known_discriminant_part ::=
       '(' discriminant_specification
-        { ';' discriminant_specification } ')'
-    ;
+        { ';' discriminant_specification } ')'.
 
 discriminant_specification ::=
       defining_identifier_list ':' subtype_mark
         [ ':=' default_expression ]
     | defining_identifier_list ':' access_definition
-        [ ':=' default_expression ]
-    ;
+        [ ':=' default_expression ].
 
-default_expression ::= expression ;
+default_expression ::= expression.
 
 --=======================================================================
 -- 3.7.1 Discriminants Constraints (page 78)
 
 discriminant_constraint ::=
       '(' discriminant_association
-        { ',' discriminant_association } ')'
-    ;
+        { ',' discriminant_association } ')'.
 
 discriminant_association ::=
-      [ selector_name { '|' selector_name } '=>' ] expression
-    ;
+      [ selector_name { '|' selector_name } '=>' ] expression.
 
 --=======================================================================
 -- 3.8 Record Types (page 80)
 
 record_type_definition ::=
-      [[ 'abstract' ] 'tagged' ] [ 'limited' ] record_definition
-    ;
+      [[ 'abstract' ] 'tagged' ] [ 'limited' ] record_definition.
 
 record_definition ::=
       'record'
         component_list
       'end' 'record'
-    | 'null' 'record'
-    ;
+    | 'null' 'record'.
 
 component_list ::=
       component_item { component_item }
     | { component_item } variant_part
-    | 'null' ';' pragma
-    ;
+    | 'null' ';' pragma.
 
-component_item ::= component_declaration | aspect_clause ;
+component_item ::= component_declaration | aspect_clause.
 
 component_declaration ::=
       defining_identifier_list ':' component_definition
-        [ ':=' default_expression ]
-    ;
+        [ ':=' default_expression ].
 
 --=======================================================================
 -- 3.8.1 Variant Parts and Discrete Choices (page 82)
@@ -318,77 +275,67 @@ variant_part ::=
       'case' direct_name 'is'
         variant
         { variant }
-      'end' 'case' ';' pragma
-    ;
+      'end' 'case' ';' pragma.
 
 variant ::=
       'when' discrete_choice_list '=>'
-        component_list
-    ;
+        component_list.
 
-discrete_choice_list ::= discrete_choice { '|' discrete_choice } ;
+discrete_choice_list ::= discrete_choice { '|' discrete_choice }.
 
-discrete_choice ::= expression | discrete_range | 'others' ;
+discrete_choice ::= expression | discrete_range | 'others'.
 
 --=======================================================================
 -- 3.9.1 Type Extensions (page 86)
 
 record_extension_part ::=
-      'with' record_definition
-    ;
+      'with' record_definition.
 
 --=======================================================================
 -- 3.10 Access Types (page 90)
 
 access_type_definition ::=
       access_to_object_definition
-    | access_to_subprogram_definition
-    ;
+    | access_to_subprogram_definition.
 
 access_to_object_definition ::=
-      'access' [ general_access_modifier ] subtype_indication
-    ;
+      'access' [ general_access_modifier ] subtype_indication.
 
-general_access_modifier ::= 'all' | 'constant' ;
+general_access_modifier ::= 'all' | 'constant'.
 
 access_to_subprogram_definition ::=
       'access' [ 'protected' ] 'procedure' parameter_profile
-    | 'access' [ 'protected' ] 'function' parameter_and_result_profile
-    ;
+    | 'access' [ 'protected' ] 'function' parameter_and_result_profile.
 
-access_definition ::= 'access' subtype_mark ;
+access_definition ::= 'access' subtype_mark.
 
 --=======================================================================
 -- 3.10.1 Incomplete Type Declarations
 
 incomplete_type_declaration ::=
-      'type' defining_identifier [ discriminant_part ] ';' pragma
-    ;
+      'type' defining_identifier [ discriminant_part ] ';' pragma.
 
 --=======================================================================
 -- 3.11 Declarative Parts (page 97)
 
-declarative_part ::= { declarative_item } ;
+declarative_part ::= { declarative_item }.
 
-declarative_item ::= basic_declarative_item | body ;
+declarative_item ::= basic_declarative_item | body.
 
 basic_declarative_item ::=
       basic_declaration
     | aspect_clause
-    | use_clause
-    ;
+    | use_clause.
 
 body ::=
       proper_body
-    | body_stub
-    ;
+    | body_stub.
 
 proper_body ::=
       subprogram_body
     | package_body
     | task_body
-    | protected_body
-    ;
+    | protected_body.
 
 --=======================================================================
 -- 4.1 Names (page 99)
@@ -402,69 +349,59 @@ name ::=
     | attribute_reference
     | type_conversion
     | function_call
-    | character_literal
-    ;
+    | character_literal.
 
 direct_name ::=
       identifier
-    | operator_symbol
-    ;
+    | operator_symbol.
 
 prefix ::=
       name
-    | implicit_dereference
-    ;
+    | implicit_dereference.
 
-explicit_dereference ::= name '.' 'all' ;
+explicit_dereference ::= name '.' 'all'.
 
-implicit_dereference ::= name ;
+implicit_dereference ::= name.
 
 --=======================================================================
 -- 4.1.1 Indexed Components (page 100)
 
 indexed_component ::=
-      prefix '(' expression { ',' expression } ')'
-    ;
+      prefix '(' expression { ',' expression } ')'.
 
 --=======================================================================
 -- 4.1.2 Slices (page 101)
 
-slice ::= prefix '(' discrete_range ')' ;
+slice ::= prefix '(' discrete_range ')'.
 
 --=======================================================================
 -- 4.1.3 Selected Components (page 102)
 
 selected_component ::=
-      prefix '.' selector_name
-    ;
+      prefix '.' selector_name.
 
 selector_name ::=
       identifier
     | character_literal
-    | operator_symbol
-    ;
+    | operator_symbol.
 
 --=======================================================================
 -- 4.1.4 Attributes (page 103)
 
 attribute_reference ::=
-      prefix '\047' attribute_designator
-    ;
+      prefix '\047' attribute_designator.
 
 attribute_designator ::=
       identifier [ '(' expression ')' ]
     | 'access'
     | 'delta'
-    | 'digits'
-    ;
+    | 'digits'.
 
 range_attribute_reference ::=
-      prefix '\047' range_attribute_designator
-    ;
+      prefix '\047' range_attribute_designator.
 
 range_attribute_designator ::=
-      'range' [ '(' expression ')' ]
-    ;
+      'range' [ '(' expression ')' ].
 
 --=======================================================================
 -- 4.3 Aggregates (page 105)
@@ -472,27 +409,23 @@ range_attribute_designator ::=
 aggregate ::=
       record_aggregate
     | extension_aggregate
-    | array_aggregate
-    ;
+    | array_aggregate.
 
 --=======================================================================
 -- 4.3.1 Record Aggregates (page 106)
 
-record_aggregate ::= '(' record_component_association_list ')' ;
+record_aggregate ::= '(' record_component_association_list ')'.
 
 record_component_association_list ::=
       record_component_association { ',' record_component_association }
-    | 'null' 'record'
-    ;
+    | 'null' 'record'.
 
 record_component_association ::=
-      [ component_choice_list '=>' ] expression
-    ;
+      [ component_choice_list '=>' ] expression.
 
 component_choice_list ::=
       selector_name { '|' selector_name }
-    | 'others'
-    ;
+    | 'others'.
 
 --=======================================================================
 -- 4.3.2 Extension Aggregates (page 108)
@@ -500,21 +433,18 @@ component_choice_list ::=
 extension_aggregate ::=
       '(' ancestor_part
         'with' record_component_association_list
-      ')'
-    ;
+      ')'.
 
 ancestor_part ::=
       expression
-    | subtype_mark
-    ;
+    | subtype_mark.
 
 --=======================================================================
 -- 4.3.3 Array Aggregates (page 109)
 
 array_aggregate ::=
       positional_array_aggregate
-    | named_array_aggregate
-    ;
+    | named_array_aggregate.
 
 positional_array_aggregate ::=
       '('
@@ -523,18 +453,15 @@ positional_array_aggregate ::=
     | '('
         expression { ',' expression }
         ',' 'others' '=>' expression
-      ')'
-    ;
+      ')'.
 
 named_array_aggregate ::=
       '('
         array_component_association { ',' array_component_association }
-      ')'
-    ;
+      ')'.
 
 array_component_association ::=
-      discrete_choice_list '=>' expression
-    ;
+      discrete_choice_list '=>' expression.
 
 --=======================================================================
 -- 4.4 Expressions (page 112)
@@ -544,26 +471,22 @@ expression ::=
     | relation { 'and' 'then' relation }
     | relation { 'or' relation }
     | relation { 'or' 'else' relation }
-    | relation { 'xor' relation }
-    ;
+    | relation { 'xor' relation }.
 
 relation ::=
       simple_expression [ relational_operator simple_expression ]
     | simple_expression [ 'not' ] 'in' range
-    | simple_expression [ 'not' ] 'in' subtype_mark
-    ;
+    | simple_expression [ 'not' ] 'in' subtype_mark.
 
 simple_expression ::=
-      [ unary_adding_operator ] term { binary_adding_operator term }
-    ;
+      [ unary_adding_operator ] term { binary_adding_operator term }.
 
-term ::= factor { multiplying_operator factor } ;
+term ::= factor { multiplying_operator factor }.
 
 factor ::=
       primary [ '**' primary ]
     | 'abs' primary
-    | 'not' primary
-    ;
+    | 'not' primary.
 
 primary ::=
       numeric_literal
@@ -573,58 +496,53 @@ primary ::=
     | name
     | qualified_expression
     | allocator
-    | '(' expression ')'
-    ;
+    | '(' expression ')'.
 
 --=======================================================================
 -- 4.5 Operators and Expression Evaluation (page 113)
 
 -- El siguiente no terminal es mencionado en ARM95 pero no es utilizado
 -- por ninguna otra regla en dicho manual.
--- logical_operator ::= 'and' | 'or' | 'xor' ;
+-- logical_operator ::= 'and' | 'or' | 'xor'.
 
-relational_operator ::= '=' | '/=' | '<' | '<=' | '>' | '>=' ;
-binary_adding_operator ::= '+' | '-' | '&' ;
-unary_adding_operator ::= '+' | '-' ;
-multiplying_operator ::= '*' | '/' | 'mod' | 'rem' ;
+relational_operator ::= '=' | '/=' | '<' | '<=' | '>' | '>='.
+binary_adding_operator ::= '+' | '-' | '&'.
+unary_adding_operator ::= '+' | '-'.
+multiplying_operator ::= '*' | '/' | 'mod' | 'rem'.
 
 -- El siguiente no terminal es mencionado en ARM95 pero no es utilizado
 -- por ninguna otra regla en dicho manual.
--- highest_precedence_operator ::= '**' | 'abs' | 'not' ;
+-- highest_precedence_operator ::= '**' | 'abs' | 'not'.
 
 --=======================================================================
 -- 4.6 Type Conversions (page 122)
 
 type_conversion ::=
       subtype_mark '(' expression ')'
-    | subtype_mark '(' name ')'
-    ;
+    | subtype_mark '(' name ')'.
 
 --=======================================================================
 -- 4.7 Qualified Expressions (page 126)
 
 qualified_expression ::=
       subtype_mark '\047' '(' expression ')'
-    | subtype_mark '\047' aggregate
-    ;
+    | subtype_mark '\047' aggregate.
 
 --=======================================================================
 -- 4.8 Allocators (page 127)
 
 allocator ::=
       'new' subtype_indication
-    | 'new' qualified_expression
-    ;
+    | 'new' qualified_expression.
 
 --=======================================================================
 -- 5.2 Simple and Compound Statements - Sequences of Statements (page 133)
 
-sequence_of_statements ::= statement { statement } ;
+sequence_of_statements ::= statement { statement }.
 
 statement ::=
       { label } simple_statement
-    | { label } compound_statement
-    ;
+    | { label } compound_statement.
 
 simple_statement ::=
       null_statement
@@ -638,8 +556,7 @@ simple_statement ::=
     | delay_statement
     | abort_statement
     | raise_statement
-    | code_statement
-    ;
+    | code_statement.
 
 compound_statement ::=
       if_statement
@@ -647,19 +564,18 @@ compound_statement ::=
     | loop_statement
     | block_statement
     | accept_statement
-    | select_statement
-    ;
+    | select_statement.
 
-null_statement ::= 'null' ';' pragma ;
+null_statement ::= 'null' ';' pragma.
 
-label ::= '<<' statement_identifier '>>' ;
+label ::= '<<' statement_identifier '>>'.
 
-statement_identifier ::= direct_name ;
+statement_identifier ::= direct_name.
 
 --=======================================================================
 -- 5.2 Assignment Statements (page 134)
 
-assignment_statement ::= name ':=' expression ';' pragma ;
+assignment_statement ::= name ':=' expression ';' pragma.
 
 --=======================================================================
 -- 5.3 If Statements (page 136)
@@ -671,10 +587,9 @@ if_statement ::=
         sequence_of_statements }
       [ 'else'
         sequence_of_statements ]
-      'end' 'if' ';' pragma
-    ;
+      'end' 'if' ';' pragma.
 
-condition ::= expression ;
+condition ::= expression.
 
 --=======================================================================
 -- 5.4 Case Statements (page 137)
@@ -683,13 +598,11 @@ case_statement ::=
       'case' expression 'is'
         case_statement_alternative
         { case_statement_alternative }
-      'end' 'case' ';' pragma
-    ;
+      'end' 'case' ';' pragma.
 
 case_statement_alternative ::=
       'when' discrete_choice_list '=>'
-        sequence_of_statements
-    ;
+        sequence_of_statements.
 
 --=======================================================================
 -- 5.5 Loop Statements (page 138)
@@ -698,17 +611,14 @@ loop_statement ::=
       [ statement_identifier ':' ]
         [ iteration_scheme ] 'loop'
           sequence_of_statements
-        'end' 'loop' [ identifier ] ';' pragma
-    ;
+        'end' 'loop' [ identifier ] ';' pragma.
 
 iteration_scheme ::=
       'while' condition
-    | 'for' loop_parameter_specification
-    ;
+    | 'for' loop_parameter_specification.
 
 loop_parameter_specification ::=
-      defining_identifier 'in' [ 'reverse' ] discrete_subtype_definition
-    ;
+      defining_identifier 'in' [ 'reverse' ] discrete_subtype_definition.
 
 --=======================================================================
 -- 5.6 Block Statements (page 139)
@@ -718,75 +628,65 @@ block_statement ::=
         [ 'declare' declarative_part ]
           'begin'
             handled_sequence_of_statements
-          'end' [ identifier ] ';' pragma
-    ;
+          'end' [ identifier ] ';' pragma.
 
 --=======================================================================
 -- 5.7 Exit Statements (page 140)
 
-exit_statement ::= 'exit' [ name ] [ 'when' condition ] ';' pragma ;
+exit_statement ::= 'exit' [ name ] [ 'when' condition ] ';' pragma.
 
 --=======================================================================
 -- 5.8 Goto Statements (page 141)
 
-goto_statement ::= 'goto' name ';' pragma ;
+goto_statement ::= 'goto' name ';' pragma.
 
 --=======================================================================
 -- 6.1 Subprogram Declarations (page 143)
 
-subprogram_declaration ::= subprogram_specification ';' pragma ;
+subprogram_declaration ::= subprogram_specification ';' pragma.
 
 abstract_subprogram_declaration ::=
-      subprogram_specification 'is' 'abstract' ';' pragma
-    ;
+      subprogram_specification 'is' 'abstract' ';' pragma.
 
 subprogram_specification ::=
       'procedure' defining_program_unit_name parameter_profile
-    | 'function' defining_designator parameter_and_result_profile
-    ;
+    | 'function' defining_designator parameter_and_result_profile.
 
 designator ::=
       [ parent_unit_name '.' ] identifier
-    | operator_symbol
-    ;
+    | operator_symbol.
 
 defining_designator ::=
       defining_program_unit_name
-    | defining_operator_symbol
-    ;
+    | defining_operator_symbol.
 
 defining_program_unit_name ::=
-      [ parent_unit_name '.' ] defining_identifier
-    ;
+      [ parent_unit_name '.' ] defining_identifier.
 
-operator_symbol ::= string_literal ;
+operator_symbol ::= string_literal.
 
-defining_operator_symbol ::= operator_symbol ;
+defining_operator_symbol ::= operator_symbol.
 
-parameter_profile ::= [ formal_part ] ;
+parameter_profile ::= [ formal_part ].
 
 parameter_and_result_profile ::=
-      [ formal_part ] 'return' subtype_mark
-    ;
+      [ formal_part ] 'return' subtype_mark.
 
 formal_part ::=
       '('
         parameter_specification { ';' parameter_specification }
-      ')'
-    ;
+      ')'.
 
 parameter_specification ::=
       defining_identifier_list ':' mode subtype_mark
         [ ':=' default_expression ]
     | defining_identifier_list ':' access_definition
-        [ ':=' default_expression ]
-    ;
+        [ ':=' default_expression ].
 
 mode ::=
       [ 'in' ]
     | 'in' 'out'
-    | 'out'
-    ;
+    | 'out'.
 
 --=======================================================================
 -- 6.3 Subprogram Bodies (page 146)
@@ -796,52 +696,45 @@ subprogram_body ::=
         declarative_part
       'begin'
         handled_sequence_of_statements
-      'end' [ designator ] ';' pragma
-    ;
+      'end' [ designator ] ';' pragma.
 
 --=======================================================================
 -- 6.4 Subprogram Calls (page 149)
 
 procedure_call_statement ::=
       name ';' pragma
-    | prefix actual_parameter_part ';' pragma
-    ;
+    | prefix actual_parameter_part ';' pragma.
 
 function_call ::=
       name
-    | prefix actual_parameter_part
-    ;
+    | prefix actual_parameter_part.
 
 actual_parameter_part ::=
-      '(' parameter_association { ',' parameter_association } ')'
-    ;
+      '(' parameter_association { ',' parameter_association } ')'.
 
 parameter_association ::=
-      [ selector_name '=>' ] explicit_actual_parameter
-    ;
+      [ selector_name '=>' ] explicit_actual_parameter.
 
 explicit_actual_parameter ::=
       expression
-    | name
-    ;
+    | name.
 
 --=======================================================================
 -- 6.5 Return Statements (page 152)
 
-return_statement ::= 'return' [ expression ] ';' pragma ;
+return_statement ::= 'return' [ expression ] ';' pragma.
 
 --=======================================================================
 -- 7.1 Package Specifications and Declarations (page 155)
 
-package_declaration ::= package_specification ';' pragma ;
+package_declaration ::= package_specification ';' pragma.
 
 package_specification ::=
       'package' defining_program_unit_name 'is'
         { basic_declarative_item }
       [ 'private'
         { basic_declarative_item } ]
-      'end' [[ parent_unit_name '.' ] identifier ]
-    ;
+      'end' [[ parent_unit_name '.' ] identifier ].
 
 --=======================================================================
 -- 7.2 Package Bodies (page 156)
@@ -851,8 +744,7 @@ package_body ::=
         declarative_part
     [ 'begin'
         handled_sequence_of_statements ]
-      'end' [[ parent_unit_name '.' ] identifier ] ';' pragma
-    ;
+      'end' [[ parent_unit_name '.' ] identifier ] ';' pragma.
 
 --=======================================================================
 -- 7.3 Private Types and Private Extensions (page 157)
@@ -860,30 +752,25 @@ package_body ::=
 private_type_declaration ::=
       'type' defining_identifier [ discriminant_part ]
         'is' [ [ 'abstract' ] 'tagged' ] [ 'limited' ] 'private' ';'
-        pragma
-    ;
+        pragma.
 
 private_extension_declaration ::=
       'type' defining_identifier [ discriminant_part ]
         'is' [ 'abstract' ] 'new' subtype_indication 'with' 'private' ';'
-        pragma
-    ;
+        pragma.
 
 --=======================================================================
 -- 8.4 Use Clauses (page 173)
 
 use_clause ::=
       use_package_clause
-    | use_type_clause
-    ;
+    | use_type_clause.
 
 use_package_clause ::=
-      'use' name { ',' name } ';' pragma
-    ;
+      'use' name { ',' name } ';' pragma.
 
 use_type_clause ::=
-      'use' 'type' subtype_mark { ',' subtype_mark } ';' pragma
-    ;
+      'use' 'type' subtype_mark { ',' subtype_mark } ';' pragma.
 
 --=======================================================================
 -- 8.5 Renaming Declarations (page 174)
@@ -893,38 +780,33 @@ renaming_declaration ::=
     | exception_renaming_declaration
     | package_renaming_declaration
     | subprogram_renaming_declaration
-    | generic_renaming_declaration
-    ;
+    | generic_renaming_declaration.
 
 --=======================================================================
 -- 8.5.1 Object Renaming Declarations (page 175)
 
 object_renaming_declaration ::=
       defining_identifier ':' subtype_mark 'renames' name ';'
-      pragma
-    ;
+      pragma.
 
 --=======================================================================
 -- 8.5.2 Exception Renaming Declarations (page 175)
 
 exception_renaming_declaration ::=
-      defining_identifier ':' 'exception' 'renames' name ';' pragma
-    ;
+      defining_identifier ':' 'exception' 'renames' name ';' pragma.
 
 --=======================================================================
 -- 8.5.3 Package Renaming Declarations (page 176)
 
 package_renaming_declaration ::=
       'package' defining_program_unit_name 'renames' name ';'
-      pragma
-    ;
+      pragma.
 
 --=======================================================================
 -- 8.5.4 Subprogram Renaming Declarations (page 176)
 
 subprogram_renaming_declaration ::=
-      subprogram_specification 'renames' name ';' pragma
-    ;
+      subprogram_specification 'renames' name ';' pragma.
 
 --=======================================================================
 -- 8.5.5 Generic Renaming Declarations (page 178)
@@ -935,141 +817,122 @@ generic_renaming_declaration ::=
     | 'generic' 'procedure' defining_program_unit_name 'renames' name ';'
         pragma
     | 'generic' 'function'  defining_program_unit_name 'renames' name ';'
-        pragma
-    ;
+        pragma.
 
 --=======================================================================
 -- 9.1 Task Units and Task Objects (page 181)
 
 task_type_declaration ::=
       'task' 'type' defining_identifier [ known_discriminant_part ]
-        [ 'is' task_definition ] ';' pragma
-    ;
+        [ 'is' task_definition ] ';' pragma.
 
 single_task_declaration ::=
       'task' defining_identifier
-        [ 'is' task_definition ] ';' pragma
-    ;
+        [ 'is' task_definition ] ';' pragma.
 
 task_definition ::=
       { task_item }
       [ 'private'
         { task_item } ]
-      'end' [ identifier ]
-    ;
+      'end' [ identifier ].
 
 task_item ::=
       entry_declaration
-    | aspect_clause
-    ;
+    | aspect_clause.
 
 task_body ::=
       'task' 'body' defining_identifier 'is'
         declarative_part
       'begin'
         handled_sequence_of_statements
-      'end' [ identifier ] ';' pragma
-    ;
+      'end' [ identifier ] ';' pragma.
 
 --=======================================================================
 -- Protected Units and Protected Objects (page 186)
 
 protected_type_declaration ::=
       'protected' 'type' defining_identifier [ known_discriminant_part ]
-        'is' protected_definition ';' pragma
-    ;
+        'is' protected_definition ';' pragma.
 
 single_protected_declaration ::=
       'protected' defining_identifier
-        'is' protected_definition ';' pragma
-    ;
+        'is' protected_definition ';' pragma.
 
 protected_definition ::=
         { protected_operation_declaration }
       [ 'private'
         { protected_element_declaration } ]
-        'end' [ identifier ]
-    ;
+        'end' [ identifier ].
 
 protected_operation_declaration ::=
       subprogram_declaration
     | entry_declaration
-    | aspect_clause         -- included in first ammendement.
-    ;
+    | aspect_clause.        -- included in first ammendement.
 
 protected_element_declaration ::=
       protected_operation_declaration
-    | component_declaration
-    ;
+    | component_declaration.
 
 protected_body ::=
       'protected' 'body' defining_identifier 'is'
         { protected_operation_item }
-      'end' [ identifier ] ';' pragma
-    ;
+      'end' [ identifier ] ';' pragma.
 
 protected_operation_item ::=
       subprogram_declaration
     | subprogram_body
     | entry_body
-    | aspect_clause
-    ;
+    | aspect_clause.
 
 --=======================================================================
 -- 9.5.2 Entries and Accept Statements
 
 entry_declaration ::=
       'entry' defining_identifier [ '(' discrete_subtype_definition ')' ]
-        parameter_profile ';' pragma
-    ;
+        parameter_profile ';' pragma.
 
 accept_statement ::=
       'accept' direct_name [ '(' entry_index ')' ] parameter_profile
         [ 'do' handled_sequence_of_statements
-          'end' [ identifier ] ] ';' pragma
-    ;
+          'end' [ identifier ] ] ';' pragma.
 
-entry_index ::= expression ;
+entry_index ::= expression.
 
 entry_body ::=
       'entry' defining_identifier entry_body_formal_part entry_barrier 'is'
         declarative_part
       'begin'
         handled_sequence_of_statements
-      'end' [ identifier ] ';' pragma
-    ;
+      'end' [ identifier ] ';' pragma.
 
 entry_body_formal_part ::=
-      [ '(' entry_index_specification ')' ] parameter_profile
-    ;
+      [ '(' entry_index_specification ')' ] parameter_profile.
 
-entry_barrier ::= 'when' condition ;
+entry_barrier ::= 'when' condition.
 
 entry_index_specification ::=
-      'for' defining_identifier 'in' discrete_subtype_definition
-    ;
+      'for' defining_identifier 'in' discrete_subtype_definition.
 
 --=======================================================================
 -- 9.5.3 Entry Calls (page 193)
 
-entry_call_statement ::= name [ actual_parameter_part ] ';' pragma ;
+entry_call_statement ::= name [ actual_parameter_part ] ';' pragma.
 
 --=======================================================================
 -- 9.5.4 Requeue Statements (page 195)
 
-requeue_statement ::= 'requeue' name [ 'with' 'abort' ] ';' pragma ;
+requeue_statement ::= 'requeue' name [ 'with' 'abort' ] ';' pragma.
 
 --=======================================================================
 -- 9.6 Delay Statements, Duration, and Time (page 197)
 
 delay_statement ::=
       delay_until_statement
-    | delay_relative_statement
-    ;
+    | delay_relative_statement.
 
-delay_until_statement ::= 'delay' 'until' expression ';' pragma ;
+delay_until_statement ::= 'delay' 'until' expression ';' pragma.
 
-delay_relative_statement ::= 'delay' expression ';' pragma ;
+delay_relative_statement ::= 'delay' expression ';' pragma.
 
 --=======================================================================
 -- 9.7 Select Statements (page 200)
@@ -1078,8 +941,7 @@ select_statement ::=
       selective_accept
     | timed_entry_call
     | conditional_entry_call
-    | asynchronous_select
-    ;
+    | asynchronous_select.
 
 --=======================================================================
 -- 9.7.1 Selective Accept (page 200)
@@ -1093,26 +955,22 @@ selective_accept ::=
           select_alternative }
       [ 'else'
           sequence_of_statements ]
-      'end' 'select' ';' pragma
-    ;
+      'end' 'select' ';' pragma.
 
-guard ::= 'when' condition '=>' ;
+guard ::= 'when' condition '=>'.
 
 select_alternative ::=
       accept_alternative
     | delay_alternative
-    | terminate_alternative
-    ;
+    | terminate_alternative.
 
 accept_alternative ::=
-      accept_statement [ sequence_of_statements ]
-    ;
+      accept_statement [ sequence_of_statements ].
 
 delay_alternative ::=
-      delay_statement [ sequence_of_statements ]
-    ;
+      delay_statement [ sequence_of_statements ].
 
-terminate_alternative ::= 'terminate' ';' pragma ;
+terminate_alternative ::= 'terminate' ';' pragma.
 
 --=======================================================================
 -- 9.7.2 Timed Entry Calls (page 202)
@@ -1122,12 +980,10 @@ timed_entry_call ::=
         entry_call_alternative
       'or'
         delay_alternative
-      'end' 'select' ';' pragma
-    ;
+      'end' 'select' ';' pragma.
 
 entry_call_alternative ::=
-      entry_call_statement [ sequence_of_statements ]
-    ;
+      entry_call_statement [ sequence_of_statements ].
 
 --=======================================================================
 -- 9.7.3 Conditional Entry Calls (page 203)
@@ -1137,8 +993,7 @@ conditional_entry_call ::=
         entry_call_alternative
       'else'
         sequence_of_statements
-      'end' 'select' ';' pragma
-    ;
+      'end' 'select' ';' pragma.
 
 --=======================================================================
 -- 9.7.4 Asynchronous Transfer of Control (page 204)
@@ -1148,67 +1003,60 @@ asynchronous_select ::=
         triggering_alternative
       'then' 'abort'
         abortable_part
-      'end' 'select' ';' pragma
-    ;
+      'end' 'select' ';' pragma.
 
-triggering_alternative ::= triggering_statement [ sequence_of_statements ] ;
+triggering_alternative ::= triggering_statement [ sequence_of_statements ].
 
 triggering_statement ::=
       entry_call_statement
-    | delay_statement
-    ;
+    | delay_statement.
 
-abortable_part ::= sequence_of_statements ;
+abortable_part ::= sequence_of_statements.
 
 --=======================================================================
 -- 9.8 Abort of a Task - Abort of a Sequence of Statements (page 205)
 
-abort_statement ::= 'abort' name { ',' name } ';' pragma ;
+abort_statement ::= 'abort' name { ',' name } ';' pragma.
 
 --=======================================================================
 -- 10.1.1 Compilation Units - Library Units (page 209)
 
-compilation ::= { compilation_unit } ;
+compilation ::= { compilation_unit }.
 
 compilation_unit ::=
       context_clause library_item
-    | context_clause subunit
-    ;
+    | context_clause subunit.
 
 library_item ::=
       [ 'private' ] library_unit_declaration
     | library_unit_body
-    | [ 'private' ] library_unit_renaming_declaration
-    ;
+    | [ 'private' ] library_unit_renaming_declaration.
 
 library_unit_declaration ::=
       subprogram_declaration
     | package_declaration
     | generic_declaration
-    | generic_instantiation
-    ;
+    | generic_instantiation.
 
 library_unit_renaming_declaration ::=
       package_renaming_declaration
     | generic_renaming_declaration
-    | subprogram_renaming_declaration
-    ;
+    | subprogram_renaming_declaration.
 
 library_unit_body ::=
       subprogram_body
-    | package_body
-    ;
+    | package_body.
 
-parent_unit_name ::= name ;
+parent_unit_name ::= name.
 
 --=======================================================================
 -- 10.1.2 Context Clauses - With Clauses (page 212)
 
-context_clause ::= { context_item } ;
+context_clause ::= { context_item }.
 
-context_item ::= with_clause | use_clause ;
+context_item ::= with_clause | use_clause.
 
-with_clause ::= 'with' name { ',' name } ';' pragma ;
+with_clause ::= 'with' name { ',' name } ';' pragma.
 
 --=======================================================================
 -- 10.1.3 Subunits of Compilation Units (page 213)
@@ -1217,37 +1065,30 @@ body_stub ::=
       subprogram_body_stub
     | package_body_stub
     | task_body_stub
-    | protected_body_stub
-    ;
+    | protected_body_stub.
 
 subprogram_body_stub ::=
-      subprogram_specification 'is' 'separate' ';' pragma
-    ;
+      subprogram_specification 'is' 'separate' ';' pragma.
 
 package_body_stub ::=
       'package' 'body' defining_identifier 'is' 'separate' ';'
-      pragma
-    ;
+      pragma.
 
 task_body_stub ::=
-      'task' 'body' defining_identifier 'is' 'separate' ';' pragma
-    ;
+      'task' 'body' defining_identifier 'is' 'separate' ';' pragma.
 
 protected_body_stub ::=
       'protected' 'body' defining_identifier 'is' 'separate' ';'
-      pragma
-    ;
+      pragma.
 
 subunit ::=
-      'separate' '(' parent_unit_name ')' proper_body
-    ;
+      'separate' '(' parent_unit_name ')' proper_body.
 
 --=======================================================================
 -- 11.1 Exception Declarations (page 221)
 
 exception_declaration ::=
-      defining_identifier_list ':' 'exception' ';' pragma
-    ;
+      defining_identifier_list ':' 'exception' ';' pragma.
 
 --=======================================================================
 -- 11.2 Exception Handlers (page 222)
@@ -1256,54 +1097,46 @@ handled_sequence_of_statements ::=
       sequence_of_statements
       [ 'exception'
         exception_handler
-        { exception_handler } ]
-    ;
+        { exception_handler } ].
 
 exception_handler ::=
       'when' [ choice_parameter_specification ':' ]
         exception_choice { '|' exception_choice } '=>'
-          sequence_of_statements
-    ;
+          sequence_of_statements.
 
-choice_parameter_specification ::= defining_identifier ;
+choice_parameter_specification ::= defining_identifier.
 
-exception_choice ::= name | 'others' ;
+exception_choice ::= name | 'others'.
 
 --=======================================================================
 -- 11.3 Raise Statements (page 222)
 
 raise_statement ::=
-      'raise' [ name ] ';' pragma
-    ;
+      'raise' [ name ] ';' pragma.
 
 --=======================================================================
 -- 12.1 Generic Declarations (page 231)
 
 generic_declaration ::=
       generic_subprogram_declaration
-    | generic_package_declaration
-    ;
+    | generic_package_declaration.
 
 generic_subprogram_declaration ::=
       generic_formal_part
-      subprogram_specification ';' pragma
-    ;
+      subprogram_specification ';' pragma.
 
 generic_package_declaration ::=
       generic_formal_part
-      package_specification ';' pragma
-    ;
+      package_specification ';' pragma.
 
 generic_formal_part ::=
-      { generic_formal_parameter_declaration | use_clause }
-    ;
+      { generic_formal_parameter_declaration | use_clause }.
 
 generic_formal_parameter_declaration ::=
       formal_object_declaration
     | formal_type_declaration
     | formal_subprogram_declaration
-    | formal_package_declaration
-    ;
+    | formal_package_declaration.
 
 --=======================================================================
 -- 12.3 Generic Instantiation (page 234)
@@ -1314,30 +1147,25 @@ generic_instantiation ::=
     | 'procedure' defining_program_unit_name 'is'
         'new' name [ generic_actual_part ] ';' pragma
     | 'function' defining_designator 'is'
-        'new' name [ generic_actual_part ] ';' pragma
-    ;
+        'new' name [ generic_actual_part ] ';' pragma.
 
 generic_actual_part ::=
-      '(' generic_association { ',' generic_association } ')'
-    ;
+      '(' generic_association { ',' generic_association } ')'.
 
 generic_association ::=
-      [ selector_name '=>' ] explicit_generic_actual_parameter
-    ;
+      [ selector_name '=>' ] explicit_generic_actual_parameter.
 
 explicit_generic_actual_parameter ::=
       expression
     | name -- variable, subprogram, entry or package_instance name.
-    | subtype_mark
-    ;
+    | subtype_mark.
 
 --=======================================================================
 -- 12.4 Formal Objects (page 236)
 
 formal_object_declaration ::=
       defining_identifier_list ':' mode subtype_mark
-        [ ':=' default_expression ] ';' pragma
-    ;
+        [ ':=' default_expression ] ';' pragma.
 
 --=======================================================================
 -- 12.5 Formal Types (page 237)
@@ -1352,64 +1180,58 @@ formal_type_declaration ::=
     | formal_ordinary_fixed_point_definition
     | formal_decimal_fixed_point_definition
     | formal_array_type_definition
-    | formal_access_type_definition
-    ;
+    | formal_access_type_definition.
 
 --=======================================================================
 -- 12.5.1 Formal Private and Derived Types (page 238)
 
 formal_private_type_definition ::=
-      [ [ 'abstract' ] 'tagged' ] [ 'limited' ] 'private'
-    ;
+      [ [ 'abstract' ] 'tagged' ] [ 'limited' ] 'private'.
 
 formal_derived_type_definition ::=
-      [ 'abstract' ] 'new' subtype_mark [ 'with' 'private' ]
-    ;
+      [ 'abstract' ] 'new' subtype_mark [ 'with' 'private' ].
 
 --=======================================================================
 -- 12.5.2 Formal Scalar Types (page 240)
 
-formal_discrete_type_definition ::= '(' '<>' ')' ;
-formal_signed_integer_type_definition ::= 'range' '<>' ;
-formal_modular_type_definition ::= 'mod' '<>' ;
-formal_floating_point_definition ::= 'digits' '<>' ;
-formal_ordinary_fixed_point_definition ::= 'delta' '<>' ;
-formal_decimal_fixed_point_definition ::= 'delta' '<>' 'digits' '<>' ;
+formal_discrete_type_definition ::= '(' '<>' ')'.
+formal_signed_integer_type_definition ::= 'range' '<>'.
+formal_modular_type_definition ::= 'mod' '<>'.
+formal_floating_point_definition ::= 'digits' '<>'.
+formal_ordinary_fixed_point_definition ::= 'delta' '<>'.
+formal_decimal_fixed_point_definition ::= 'delta' '<>' 'digits' '<>'.
 
 --=======================================================================
 -- 12.5.3 Formal Array Types (page 240)
 
-formal_array_type_definition ::= array_type_definition ;
+formal_array_type_definition ::= array_type_definition.
 
 --=======================================================================
 -- 12.5.4 Formal Access Types (page 241)
 
-formal_access_type_definition ::= access_type_definition ;
+formal_access_type_definition ::= access_type_definition.
 
 --=======================================================================
 -- 12.6 Formal Subprograms
 
 formal_subprogram_declaration ::=
       'with' subprogram_specification
-        [ 'is' subprogram_default ] ';' pragma
-    ;
+        [ 'is' subprogram_default ] ';' pragma.
 
-subprogram_default ::= default_name | '<>' ;
+subprogram_default ::= default_name | '<>'.
 
-default_name ::= name ;
+default_name ::= name.
 
 --=======================================================================
 -- 12.7 Formal Packages (page 243)
 
 formal_package_declaration ::=
       'with' 'package' defining_identifier
-        'is' 'new' name formal_package_actual_part ';' pragma
-    ;
+        'is' 'new' name formal_package_actual_part ';' pragma.
 
 formal_package_actual_part ::=
       '(' '<>' ')'
-    | [ generic_actual_part ]
-    ;
+    | [ generic_actual_part ].
 
 --=======================================================================
 -- 13.1 Operational and Representation Items (page 247)
@@ -1418,14 +1240,12 @@ aspect_clause ::=
       attribute_definition_clause
     | enumeration_representation_clause
     | record_representation_clause
-    | at_clause
-    ;
+    | at_clause.
 
 local_name ::=
       direct_name
     | direct_name '\047' attribute_designator
-    | name
-    ;
+    | name.
 
 --=======================================================================
 -- 13.3 Operational and Representation Attributes (page 250)
@@ -1434,17 +1254,15 @@ attribute_definition_clause ::=
       'for' local_name '\047' attribute_designator 'use' expression
       ';' pragma
     | 'for' local_name '\047' attribute_designator 'use' name ';'
-        pragma
-    ;
+        pragma.
 
 --=======================================================================
 -- 13.4 Enumeration Representation Clauses (page 256)
 
 enumeration_representation_clause ::=
-      'for' local_name 'use' enumeration_aggregate ';' pragma
-    ;
+      'for' local_name 'use' enumeration_aggregate ';' pragma.
 
-enumeration_aggregate ::= array_aggregate ;
+enumeration_aggregate ::= array_aggregate.
 
 --=======================================================================
 -- 14.5.1 Record Representation Clauses (page 257)
@@ -1453,22 +1271,20 @@ record_representation_clause ::=
       'for' local_name 'use'
         'record' [ mod_clause ]
           { component_clause }
-        'end' 'record' ';' pragma
-    ;
+        'end' 'record' ';' pragma.
 
 component_clause ::=
       local_name 'at' position 'range' first_bit '..' last_bit ';'
-      pragma
-    ;
+      pragma.
 
-position ::= expression ;
-first_bit ::= simple_expression ;
-last_bit ::= simple_expression ;
+position ::= expression.
+first_bit ::= simple_expression.
+last_bit ::= simple_expression.
 
 --=======================================================================
 -- 13.8 Machine Code Insertions (page 264)
 
-code_statement ::= qualified_expression ;
+code_statement ::= qualified_expression.
 
 --=======================================================================
 -- 13.12 Pragma Restrictions (page 273)
@@ -1476,26 +1292,23 @@ code_statement ::= qualified_expression ;
 -- not used, as only is defined for pragma Restrictions.
 -- restriction ::=
 --    identifier
---  | identifier '=>' expression
---  ;
+--  | identifier '=>' expression.
 
 --=======================================================================
 -- J.3 Reduced Accuracy Subtypes (page 488)
 
 delta_constraint ::=
-      'delta' expression [ range_constraint ]
-    ;
+      'delta' expression [ range_constraint ].
 
 --=======================================================================
 -- J.7 At Clauses (page 490)
 
 at_clause ::=
-      'for' direct_name 'use' 'at' expression ';' pragma
-    ;
+      'for' direct_name 'use' 'at' expression ';' pragma.
 
 --=======================================================================
 -- J.8 Mod Clauses (page 491)
 
-mod_clause ::= 'at' 'mod' expression ';' pragma ;
+mod_clause ::= 'at' 'mod' expression ';' pragma.
 
 -- $Id: ada95.bnf,v 1.11 2012/09/08 13:52:09 luis Exp $

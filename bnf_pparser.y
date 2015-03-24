@@ -51,7 +51,7 @@ static char*                        rul_on="\e[31m";
 static char*                        rul_off="\e[0m";
 static char*                        lft_on="\e[1;33m";
 static char*                        lft_off="\e[0m";
-static char*                        equ_on="\e[32m";
+static char*                        equ_on="\e[31m";
 static char*                        equ_off="\e[0m";
 static char*                        trm_on="\e[32m";
 static char*                        trm_off="\e[0m";
@@ -87,7 +87,7 @@ void do_yacc_nocolor(void)
 #define OP(T) if (flags & FLAG_PARSER) \
     printf(" %s" T "%s", ope_on, ope_off)
 #define EOL() if (flags & FLAG_PARSER) \
-    printf(" %s;%s\n", eol_on, eol_off)
+    printf("%s.%s\n", eol_on, eol_off)
 
 int temp_id             =           1;
 char temp_buffer[15];
@@ -124,7 +124,8 @@ grammar:
       grammar rule {
         P("001.01","grammar");
             NT("grammar");
-            NT("rule"); EOL();
+            NT("rule");
+            EOL();
     }
     | rule {
         P("001.02","grammar");
@@ -133,18 +134,19 @@ grammar:
     ;
 
 rule:
-      IDENT COLON_COLON_EQ alternative_list ';' {
+      IDENT COLON_COLON_EQ alternative_list '.' {
         P("002.01","rule");
             TE("IDENT");
             OP("::=");
             NT("alternative_list");
-            OP(";");
+            OP(".");
             EOL();
         $1->flags |= TI_DEFINED_HERE;
     }
-    | error ';' {
-        fprintf(stderr,
-            D("syntax error recovered after ';'\n"));
+    | error '.' {
+        fprintf(stderr, "================[.....]================\n");
+	    fprint_tokeninfo(tokeninfo_db, stderr, 
+            D("syntax error recovered after '.' above. Skypped text.\n"));
     }
     ;
 
@@ -158,7 +160,7 @@ alternative_list:
     }
     | term_list {
         P("003.02","alternative_list");
-            NT("alternative");
+            NT("term_list");
             EOL();
     }
     ;

@@ -19,7 +19,7 @@
 
 #define TABSIZE     4
 #define HOME        1
-#define NLINES      15
+#define NLINES      2
 
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 
@@ -217,10 +217,11 @@ size_t xref_tokeninfo(
         struct ti_item *it = (struct ti_item *) avl_iterator_data(i);
         struct ti_xref *xr;
         char *sn = "UNKNOWN";
+        char *s1 = "", *s2 = "";
 
         switch(it->typ) {
         case STRING: sn = "STRING"; break;
-        case IDENT: sn = "IDENTIFIER"; break;
+        case IDENT: sn = "IDENTIFIER"; s1 = "<"; s2 = ">"; break;
         } /* switch */
 
         LIST_FOREACH_ELEMENT(
@@ -230,8 +231,8 @@ size_t xref_tokeninfo(
                 xrefs_node)
         {
             char *isdef = xr->flags & TI_DEFINED_HERE ? "*" : "";
-            res += fprintf(o,"%s:%d:%d:%s%s <%s>\n",
-                    n, xr->lin, xr->col, sn, isdef, it->str);
+            res += fprintf(o,"%s:%d:%d:%s%s %s%s%s\n",
+                    n, xr->lin, xr->col, sn, isdef, s1, it->str, s2);
         } /* LIST_FOREACH_ELEMENT */
     } /* for */
 

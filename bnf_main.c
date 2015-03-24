@@ -123,9 +123,9 @@ int main(int argc, char **argv)
 
     res = yyparse();
 
-    xref_tokeninfo(tokeninfo_db, stdout, filename);
 
 #if 0
+    xref_tokeninfo(tokeninfo_db, stdout, filename);
     if (res == 0) {
         AVL_ITERATOR p;
 

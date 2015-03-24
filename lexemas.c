@@ -7,6 +7,8 @@
  */
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 static char LEXEMAS_C_RCSId[] = "\n$Id: lexemas.c,v 1.2 2012/08/22 13:41:14 luis Exp $\n";
 
@@ -22,14 +24,27 @@ void string_dequote(char *si, char *so)
     *so = *si;
 } /* string_dequote */
 
+void test(const char *s)
+{
+    static char a[100];
+    static char b[100];
+    static int i = 1;
+    printf("test #%d\n", i);
+    memset(a, 'A', sizeof a); a[sizeof a - 1] = 0;
+    memset(b, 'B', sizeof b); b[sizeof b - 1] = 0;
+    printf("a = [%s];\nb = [%s];\n", a, b);
+    strcpy(a, s);
+    string_dequote(a, a);
+    printf("a = [%s]; b = [%s];\n", a, b);
+    printf("fin test #%d\n", i++);
+}
+
 main()
 {
-    char a[100];
-    char b[100];
-    memset(a, '@', sizeof a);
-    strcpy(a, "/pe//pe/");
-    string_dequote(a, b);
-    printf("a = [%s]; b = [%s];\n", a, b);
+    char linea[1000];
+    while(fgets(linea, sizeof linea, stdin)) {
+        test(strtok(linea, "\n"));
+    } /* while */
 } /* main */
 
 /* $Id: lexemas.c,v 1.2 2012/08/22 13:41:14 luis Exp $ */
