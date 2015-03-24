@@ -5,23 +5,21 @@
 -- Disclaimer: (C) 2012 LUIS COLORADO SISTEMAS S.L.U.
 --                 All rights reserved.
 
-grammar ::=
-      grammar rule
-    | rule
-    ;
+grammar ::= grammar rule | rule ; -- list of rules.
 
-rule ::= IDENT '::=' alternative_list ';' ;
+rule ::= IDENT '::=' alternative_list ';' ; -- fixed syntax
 
 alternative_list ::= alternative_list '|' term_list
-    | term_list
+    | term_list -- list of alternatives with at least one term_list.
     ;
 
 term_list ::= term_list term
-    | term
-    
+    | -- empty
+    ;    
 
 
-term ::= IDENT
+term ::= -- a term can be different things.
+      IDENT
     | STRING
     | '{' alternative_list '}'
     | '[' alternative_list ']'
@@ -29,3 +27,4 @@ term ::= IDENT
     ;
 
 -- $Id: bnf.bnf,v 1.2 2012/09/08 15:58:11 luis Exp $
+[forced error]

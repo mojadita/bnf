@@ -246,6 +246,6 @@ ProgramModule ::=
 
 -- Rule #96-97:
 CompilationUnit ::= DefinitionModule |
-    [ 'IMPLEMENTATION' ] ProgamModule '.';
+    [ 'IMPLEMENTATION' ] ProgramModule '.';
 
 -- End.

@@ -106,7 +106,8 @@ size_t vfprint_tokeninfo(
     int                 has_print_something
                             = 0;
     char                buff[20];
-    struct ti_xref       *l = LIST_ELEMENT_LAST(&db->input_list, struct ti_xref, input_node);
+    struct ti_xref       *l = LIST_ELEMENT_LAST(
+            &db->input_list, struct ti_xref, input_node);
     int                 ndig = snprintf(buff, sizeof buff, "%d", l ? l->lin : 0);
 
     assert(db);
@@ -116,6 +117,25 @@ size_t vfprint_tokeninfo(
         t;
         t = LIST_ELEMENT_NEXT(t, struct ti_xref, input_node)
     ) {
+        const char *esc1;
+        const char *esc2 = "\033[0m";
+
+        switch (t->tinfo->typ) {
+        case COMMENT:        esc1 = "\033[34m";   break;
+        case IDENT:          esc1 = t->flags & TI_DEFINED_HERE
+                                ? "\033[33m"
+                                : "\033[37m";
+                             break;
+        case STRING:         esc1 = "\033[35m"; break;
+        case ';':
+        case COLON_COLON_EQ: esc1 = "\033[31m"; break;
+        case '|':
+        case '[': case ']':
+        case '{': case '}':
+        case '(': case ')':  esc1 = "\033[32m"; break;
+        default:             esc1 = "";           break;
+        } /* switch */
+
         if (!lin) {
             lin = t->lin;
             res += fprintf(o, "%0*d: ", ndig, lin); fflush(o);
@@ -125,7 +145,7 @@ size_t vfprint_tokeninfo(
             col = db->home;
         } /* if */
         res += fprintf(o, "%*s", t->col - col, ""); fflush(o);
-        res += fprintf(o, "%s", t->tinfo->str); fflush(o);
+        res += fprintf(o, "%s%s%s", esc1, t->tinfo->str, esc2); fflush(o);
         col = t->col + t->tinfo->len;
         lin = t->lin;
         has_print_something = 1;
@@ -136,17 +156,15 @@ size_t vfprint_tokeninfo(
         col = db->home;
         res += fprintf(o,
                 "\n%.*s: %*s%*.*s\n%s> ",
-                ndig, "********************",
-                t->col - col, "",
-                (int)t->tinfo->len, (int)t->tinfo->len,
+                ndig, "####################",
+                l->col - col, "",
+                (int)l->tinfo->len, (int)l->tinfo->len,
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
                 buff); fflush(o);
         res += vfprintf(o, fmt, p); fflush(o);
     } /* if */
-
-    res += fprintf(o, "\n"); fflush(o);
 
     return res;
 } /* vfprint_tokeninfo */
@@ -205,12 +223,15 @@ size_t xref_tokeninfo(
         case IDENT: sn = "IDENTIFIER"; break;
         } /* switch */
 
-        LIST_FOREACH_ELEMENT(xr, &it->xrefs_list, struct ti_xref, xrefs_node) {
-            char *isdef = "";
-            if (xr->flags & TI_DEFINED_HERE)
-                isdef = "*";
-            res += fprintf(o,"%s:%d:%d: %s%s [%s]\n",
-                    n, xr->lin, xr->col, isdef, sn, it->str);
+        LIST_FOREACH_ELEMENT(
+                xr,
+                &it->xrefs_list,
+                struct ti_xref,
+                xrefs_node)
+        {
+            char *isdef = xr->flags & TI_DEFINED_HERE ? "*" : "";
+            res += fprintf(o,"%s:%d:%d:%s%s <%s>\n",
+                    n, xr->lin, xr->col, sn, isdef, it->str);
         } /* LIST_FOREACH_ELEMENT */
     } /* for */
 
