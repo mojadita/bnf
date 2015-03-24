@@ -15,6 +15,7 @@
 
 #include "bnf.h"
 #include "tokeninfo.h"
+#include "bnf_pparser.h"
 
 #define TABSIZE     4
 #define HOME        1
@@ -55,15 +56,20 @@ struct ti_xref* add_tokeninfo(
     assert(gd);
     itm = avl_tree_get(gd->tokens, s);
     if (!itm) { /* it doesn't exist */
-        AVL_ITERATOR it;
+        switch (typ) {
+            AVL_ITERATOR it;
 
-        assert(itm = malloc(sizeof(struct ti_item)));
-        it = avl_tree_put(gd->tokens, s, itm);
-        itm->db = gd;
-        itm->str = (const char *) avl_iterator_key(it);
-        itm->len = strlen(itm->str);
-        LIST_INIT(&itm->xrefs_list);
-        itm->typ = typ;
+        case IDENT: case STRING:
+            assert(itm = malloc(sizeof(struct ti_item)));
+            it = avl_tree_put(gd->tokens, s, itm);
+            itm->db = gd;
+            itm->str = (const char *) avl_iterator_key(it);
+            itm->len = strlen(itm->str);
+            LIST_INIT(&itm->xrefs_list);
+            itm->typ = typ;
+            break;
+
+        } /* switch */
     } /* if */
 
     /* go with res */
@@ -73,7 +79,8 @@ struct ti_xref* add_tokeninfo(
     res->lin = l;
     res->col = c;
     LIST_APPEND(&gd->input_list, &res->input_node);
-    LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
+    if (itm)
+        LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
 
     /* advance the pointer to the first printable xref, if
      * necessary */
@@ -192,9 +199,19 @@ size_t xref_tokeninfo(
     {
         struct ti_item *it = (struct ti_item *) avl_iterator_data(i);
         struct ti_xref *xr;
+        char *sn = "UNKNOWN";
+
+        switch(it->typ) {
+        case STRING: sn = "STRING"; break;
+        case IDENT: sn = "IDENTIFIER"; break;
+        } /* switch */
 
         LIST_FOREACH_ELEMENT(xr, &it->xrefs_list, struct ti_xref, xrefs_node) {
-            res += fprintf(o,"%s:%d:%d: len=%d [%s]\n", n, xr->lin, xr->col, it->len, it->str);
+            char *isdef = "";
+            if (xr->flags & TI_DEFINED_HERE)
+                isdef = "*";
+            res += fprintf(o,"%s:%d:%d: %s%s [%s]\n",
+                    n, xr->lin, xr->col, isdef, sn, it->str);
         } /* LIST_FOREACH_ELEMENT */
     } /* for */
 

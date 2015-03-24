@@ -85,13 +85,13 @@ composite_constraint ::= index_constraint | discriminant_constraint ;
 object_declaration ::=
       defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
         subtype_indication [ ':=' expression ]
-        [ aspect_specification ] ';' pragma
+      [ aspect_specification ] ';' pragma
     | defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
         access_definition [ ':=' expression ]
-        [ aspect_specification ] ';' pragma
+      [ aspect_specification ] ';' pragma
     | defining_identifier_list ':' [ 'aliased' ] [ 'constant' ]
         array_type_definition [ ':=' expression ]
-        [ aspect_specification ] ';' pragma
+      [ aspect_specification ] ';' pragma
     | single_task_declaration
     | single_protected_declaration
     ;
@@ -298,7 +298,7 @@ component_declaration ::=
 variant_part ::=
       'case' direct_name 'is'
         variant
-        { variant }
+      { variant }
       'end' 'case' ';' pragma
     ;
 
@@ -654,11 +654,11 @@ assignment_statement ::= name ':=' expression ';' pragma ;
 
 if_statement ::=
       'if' condition 'then'
-        sequence_of_statements
-      { 'elsif' condition 'then'
-        sequence_of_statements }
-      [ 'else'
-        sequence_of_statements ]
+         sequence_of_statements
+    { 'elsif' condition 'then'
+         sequence_of_statements }
+    [ 'else'
+         sequence_of_statements ]
       'end' 'if' ';' pragma
     ;
 
@@ -670,13 +670,13 @@ condition ::= expression ;
 case_statement ::=
       'case' expression 'is'
         case_statement_alternative
-        { case_statement_alternative }
+      { case_statement_alternative }
       'end' 'case' ';' pragma
     ;
 
 case_statement_alternative ::=
       'when' discrete_choice_list '=>'
-        sequence_of_statements
+         sequence_of_statements
     ;
 
 --=======================================================================
@@ -684,7 +684,7 @@ case_statement_alternative ::=
 
 loop_statement ::=
       [ statement_identifier ':' ]
-        [ iteration_scheme ] 'loop'
+      [ iteration_scheme ] 'loop'
           sequence_of_statements
         'end' 'loop' [ identifier ] ';' pragma
     ;
@@ -703,9 +703,10 @@ loop_parameter_specification ::=
 
 block_statement ::=
       [ statement_identifier ':' ]
-        [ 'declare' declarative_part ]
+        [ 'declare'
+             declarative_part ]
           'begin'
-            handled_sequence_of_statements
+             handled_sequence_of_statements
           'end' [ identifier ] ';' pragma
     ;
 
@@ -826,7 +827,7 @@ package_declaration ::= package_specification ';' pragma ;
 package_specification ::=
       'package' defining_program_unit_name 'is'
         { basic_declarative_item }
-      [ 'private'
+    [ 'private'
         { basic_declarative_item } ]
       'end' [[ parent_unit_name '.' ] identifier ]
     ;
@@ -837,7 +838,7 @@ package_specification ::=
 package_body ::=
       'package' 'body' defining_program_unit_name 'is'
         declarative_part
-      [ 'begin'
+    [ 'begin'
         handled_sequence_of_statements ]
       'end' [[ parent_unit_name '.' ] identifier ] ';' pragma
     ;
@@ -940,8 +941,8 @@ single_task_declaration ::=
     ;
 
 task_definition ::=
-      { task_item }
-      [ 'private'
+    { task_item }
+    [ 'private'
         { task_item } ]
       'end' [ identifier ]
     ;
@@ -973,9 +974,9 @@ single_protected_declaration ::=
     ;
 
 protected_definition ::=
-        { protected_operation_declaration }
+      { protected_operation_declaration }
       [ 'private'
-        { protected_element_declaration } ]
+           { protected_element_declaration } ]
         'end' [ identifier ]
     ;
 
@@ -1076,10 +1077,10 @@ selective_accept ::=
       'select'
         [ guard ]
           select_alternative
-      { 'or'
+    { 'or'
         [ guard ]
           select_alternative }
-      [ 'else'
+    [ 'else'
           sequence_of_statements ]
       'end' 'select' ';' pragma
     ;
@@ -1243,14 +1244,14 @@ exception_declaration ::=
 handled_sequence_of_statements ::=
       sequence_of_statements
       [ 'exception'
-        exception_handler
+          exception_handler
         { exception_handler } ]
     ;
 
 exception_handler ::=
       'when' [ choice_parameter_specification ':' ]
-        exception_choice { '|' exception_choice } '=>'
-          sequence_of_statements
+         exception_choice { '|' exception_choice } '=>'
+           sequence_of_statements
     ;
 
 choice_parameter_specification ::= defining_identifier ;
@@ -1419,10 +1420,8 @@ local_name ::=
 -- 13.3 Operational and Representation Attributes (page 250)
 
 attribute_definition_clause ::=
-      'for' local_name '\047' attribute_designator 'use' expression
-      ';' pragma
-    | 'for' local_name '\047' attribute_designator 'use' name ';'
-        pragma
+      'for' local_name '\047' attribute_designator 'use' expression ';' pragma
+    | 'for' local_name '\047' attribute_designator 'use' name ';' pragma
     ;
 
 --=======================================================================

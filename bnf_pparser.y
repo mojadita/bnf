@@ -143,6 +143,7 @@ rule:
             NT("alternative_list");
             OP(";");
             EOL();
+        $1->flags |= TI_DEFINED_HERE;
     }
     | error ';' {
         fprintf(stderr,
