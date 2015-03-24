@@ -18,7 +18,7 @@ alternative_list ::= alternative_list '|' term_list
 
 term_list ::= term_list term
     | term
-    ;
+    
 
 
 term ::= IDENT

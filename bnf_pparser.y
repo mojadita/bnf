@@ -112,11 +112,8 @@ static int nerr = 0;
 
 %union {
     struct grammar*                 grammar;
-    struct rule_list*               rule_list;
     struct rule*                    rule;
-    struct alternative_list*        alternative_list;
     struct alternative*             alternative;
-    struct term_list*               term_list;
     struct term*                    term;
     struct ti_xref*                 tokeninfo;
 } /* union */

@@ -30,8 +30,8 @@ struct ti_db *init_tokeninfo(struct ti_db *res)
     /* initialize fields */
     assert(res->tokens = new_avl_tree( /* token database */
             (AVL_FCOMP) strcmp,        /* fcomp */
-            (AVL_FCONS) strdup,        /* fcons */
-            (AVL_FDEST) free,          /* fdest */
+            (AVL_FCONS) NULL,          /* fcons */
+            (AVL_FDEST) NULL,          /* fdest */
             (AVL_FPRNT) fputs));       /* fprnt */
     LIST_INIT(&res->input_list);       /* token references list */
     res->tab_size   = TABSIZE;         /* fields for printing */
@@ -56,20 +56,20 @@ struct ti_xref* add_tokeninfo(
     assert(gd);
     itm = avl_tree_get(gd->tokens, s);
     if (!itm) { /* it doesn't exist */
+        assert(itm = malloc(sizeof(struct ti_item)));
+        itm->db = gd;
+        itm->str = strdup(s);
+
         switch (typ) {
-            AVL_ITERATOR it;
-
         case IDENT: case STRING:
-            assert(itm = malloc(sizeof(struct ti_item)));
-            it = avl_tree_put(gd->tokens, s, itm);
-            itm->db = gd;
-            itm->str = (const char *) avl_iterator_key(it);
-            itm->len = strlen(itm->str);
-            LIST_INIT(&itm->xrefs_list);
-            itm->typ = typ;
+            avl_tree_put(gd->tokens, itm->str, itm);
             break;
-
         } /* switch */
+
+        itm->len = strlen(itm->str);
+        LIST_INIT(&itm->xrefs_list);
+        itm->typ = typ;
+
     } /* if */
 
     /* go with res */
@@ -79,8 +79,7 @@ struct ti_xref* add_tokeninfo(
     res->lin = l;
     res->col = c;
     LIST_APPEND(&gd->input_list, &res->input_node);
-    if (itm)
-        LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
+    LIST_APPEND(&itm->xrefs_list, &res->xrefs_node);
 
     /* advance the pointer to the first printable xref, if
      * necessary */
@@ -119,14 +118,14 @@ size_t vfprint_tokeninfo(
     ) {
         if (!lin) {
             lin = t->lin;
-            res += fprintf(o, "%0*d: ", ndig, lin);
+            res += fprintf(o, "%0*d: ", ndig, lin); fflush(o);
             col = db->home;
         } else while (lin < t->lin) {
-            res += fprintf(o, "\n%0*d: ", ndig, ++lin);
+            res += fprintf(o, "\n%0*d: ", ndig, ++lin); fflush(o);
             col = db->home;
         } /* if */
-        res += fprintf(o, "%*s", t->col - col, "");
-        res += fprintf(o, "%s", t->tinfo->str);
+        res += fprintf(o, "%*s", t->col - col, ""); fflush(o);
+        res += fprintf(o, "%s", t->tinfo->str); fflush(o);
         col = t->col + t->tinfo->len;
         lin = t->lin;
         has_print_something = 1;
@@ -143,11 +142,11 @@ size_t vfprint_tokeninfo(
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-                buff);
-        res += vfprintf(o, fmt, p);
+                buff); fflush(o);
+        res += vfprintf(o, fmt, p); fflush(o);
     } /* if */
 
-    res += fprintf(o, "\n");
+    res += fprintf(o, "\n"); fflush(o);
 
     return res;
 } /* vfprint_tokeninfo */
