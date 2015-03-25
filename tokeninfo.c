@@ -138,14 +138,14 @@ size_t vfprint_tokeninfo(
 
         if (!lin) {
             lin = t->lin;
-            res += fprintf(o, "%0*d: ", ndig, lin); fflush(o);
+            res += fprintf(o, "%0*d: ", ndig, lin);
             col = db->home;
         } else while (lin < t->lin) {
-            res += fprintf(o, "\n%0*d: ", ndig, ++lin); fflush(o);
+            res += fprintf(o, "\n%0*d: ", ndig, ++lin);
             col = db->home;
         } /* if */
-        res += fprintf(o, "%*s", t->col - col, ""); fflush(o);
-        res += fprintf(o, "%s%s%s", esc1, t->tinfo->str, esc2); fflush(o);
+        res += fprintf(o, "%*s", t->col - col, "");
+        res += fprintf(o, "%s%s%s", esc1, t->tinfo->str, esc2);
         col = t->col + t->tinfo->len;
         lin = t->lin;
         has_print_something = 1;
@@ -162,8 +162,8 @@ size_t vfprint_tokeninfo(
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-                buff); fflush(o);
-        res += vfprintf(o, fmt, p); fflush(o);
+                buff);
+        res += vfprintf(o, fmt, p);
     } /* if */
 
     return res;
