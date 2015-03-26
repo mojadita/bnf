@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 #include "bnf_main.h"
-#include "bnf_tabsim.h"
+#include "bnf_symtab.h"
 
 #include "pass1.h"
 

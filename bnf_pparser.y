@@ -14,7 +14,7 @@
 
 #include "avl.h"
 
-#include "bnf_tabsim.h"
+#include "bnf_symtab.h"
 #include "tokeninfo.h"
 #include "bnf.h"
 #include "bnf_main.h"

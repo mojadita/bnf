@@ -19,7 +19,7 @@
 
 #define TABSIZE     4
 #define HOME        1
-#define NLINES      2
+#define NLINES      5
 
 static char TOKENINFO_C_RCSId[] = "\n$Id: tokeninfo.c,v 1.3 2012/08/26 22:39:39 luis Exp $\n";
 

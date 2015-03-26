@@ -23,7 +23,7 @@
 #include "tokeninfo.h"
 #include "avl.h"
 #include "bnf_main.h"
-#include "bnf_tabsim.h"
+#include "bnf_symtab.h"
 #include "pass1.h"
 
 static char PASS2_C_RCSId[] = "\n$Id: pass2.c,v 1.10 2012/09/15 19:57:33 luis Exp $\n";

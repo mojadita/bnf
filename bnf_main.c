@@ -19,7 +19,7 @@
 
 #include "bnf.h"
 #include "avl.h"
-#include "bnf_tabsim.h"
+#include "bnf_symtab.h"
 #include "bnf_sparser.h"
 #include "bnf_main.h"
 #include "pass1.h"

@@ -39,17 +39,17 @@ bnf_libs = -lavl
 bnf: $(bnf_objs)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o bnf $(bnf_objs) $(bnf_libs)
 
-bnf_pparser.o: bnf_tabsim.h tokeninfo.h bnf_main.h pass1.h
+bnf_pparser.o: bnf_symtab.h tokeninfo.h bnf_main.h pass1.h
 bnf_sparser.o: bnf_pparser.h tokeninfo.h bnf_main.h bnf_sparser.h
 tokeninfo.o: tokeninfo.h lists.h
-bnf_main.o: bnf_tabsim.h tokeninfo.h bnf_sparser.h bnf_main.h pass1.h print_symbols.h print_strtable.h
+bnf_main.o: bnf_symtab.h tokeninfo.h bnf_sparser.h bnf_main.h pass1.h print_symbols.h print_strtable.h
 print_symbols.o: print_symbols.h
 print_strtable.o: print_strtable.h
-pass0.o: pass1.h bnf_tabsim.h tokeninfo.h bnf_main.h
-pass1.o: pass1.h bnf_tabsim.h tokeninfo.h bnf_main.h
-pass2.o: pass1.h bnf_tabsim.h tokeninfo.h bnf_main.h
-pass3.o: pass1.h bnf_tabsim.h tokeninfo.h bnf_main.h
-pass4.o: pass1.h bnf_tabsim.h tokeninfo.h bnf_main.h
+pass0.o: pass1.h bnf_symtab.h tokeninfo.h bnf_main.h
+pass1.o: pass1.h bnf_symtab.h tokeninfo.h bnf_main.h
+pass2.o: pass1.h bnf_symtab.h tokeninfo.h bnf_main.h
+pass3.o: pass1.h bnf_symtab.h tokeninfo.h bnf_main.h
+pass4.o: pass1.h bnf_symtab.h tokeninfo.h bnf_main.h
 
 bnf_pparser.c bnf_pparser.h: bnf_pparser.y
 	$(YACC) $(YFLAGS) --defines=bnf_pparser.h --output=bnf_pparser.c bnf_pparser.y
