@@ -124,12 +124,12 @@ grammar:
             NT("grammar");
             NT("rule");
             EOL();
-      parsed_grammar = $$ = new_grammar_1($1, $2);
+        parsed_grammar = $$ = new_grammar_1($1, $2);
     }
     | rule {
         P("001.02","grammar");
             NT("rule"); EOL();
-      parsed_grammar = $$ = new_grammar_2($1);
+        parsed_grammar = $$ = new_grammar_2($1);
     }
     ;
 
