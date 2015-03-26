@@ -26,6 +26,8 @@ struct grammar* new_grammar_1(
     res->alt._1.e_1 = _1;
     res->alt._1.e_2 = _2;
 
+    printf(D("_1=%p,_2=%p ==> ret=%p\n"), _1, _2, res);
+
     return res;
 } /* new_grammar_1 */
 
@@ -39,6 +41,7 @@ struct grammar *new_grammar_2(
     res->typ = BNF_GRAMMAR_ALT_2;
     res->alt._2.e_1 = _1;
 
+    printf(D("_1=%p ==> ret=%p\n"), _1, res);
     return res;
 } /* new_grammar_2 */
 
@@ -59,6 +62,7 @@ struct rule *new_rule_1(
     res->alt._1.e_3 = _3;
     res->alt._1.e_4 = _4;
 
+    printf(D("_1=%p,_2=%p,_3=%p,_4=%p ==> ret=%p\n"), _1, _2, _3, _4, res);
     return res;
 } /* new_rule_1 */
 
@@ -78,6 +82,7 @@ struct alternative_list *new_alternative_list_1(
     res->alt._1.e_2 = _2;
     res->alt._1.e_3 = _3;
 
+    printf(D("_1=%p,_2=%p,_3=%p ==> ret=%p\n"), _1, _2, _3, res);
     return res;
 } /* new_alternative_list_1 */
 
@@ -91,6 +96,7 @@ struct alternative_list *new_alternative_list_2(
     res->typ = BNF_ALTERNATIVE_LIST_ALT_2;
     res->alt._2.e_1 = _1;
 
+    printf(D("_1=%p ==> ret=%p\n"), _1, res);
     return res;
 } /* new_alternative_list_2 */
 
@@ -108,6 +114,7 @@ struct term_list* new_term_list_1(
     res->alt._1.e_1 = _1;
     res->alt._1.e_2 = _2;
 
+    printf(D("_1=%p,_2=%p ==> ret=%p\n"), _1, _2, res);
     return res;
 } /* new_term_list_1 */
 
@@ -119,6 +126,7 @@ struct term_list* new_term_list_2(void)
 
     res->typ = BNF_TERM_LIST_ALT_2;
 
+    printf(D(" ==> ret=%p\n"), res);
     return res;
 } /* new_term_list_2 */
 
@@ -134,6 +142,7 @@ struct term *new_term_1(
     res->typ = BNF_TERM_ALT_1;
     res->alt._1.e_1 = _1;
 
+    printf(D("_1=%p ==> ret=%p\n"), _1, res);
     return res;
 } /* new_term_1 */
 
@@ -147,6 +156,7 @@ struct term *new_term_2(
     res->typ = BNF_TERM_ALT_2;
     res->alt._2.e_1 = _1;
 
+    printf(D("_1=%p ==> ret=%p\n"), _1, res);
     return res;
 } /* new_term_2 */
 
@@ -164,6 +174,7 @@ struct term *new_term_3(
     res->alt._3.e_2 = _2;
     res->alt._3.e_3 = _3;
 
+    printf(D("_1=%p,_2=%p,_3=%p ==> ret=%p\n"), _1, _2, _3, res);
     return res;
 } /* new_term_3 */
 
@@ -181,6 +192,7 @@ struct term *new_term_4(
     res->alt._4.e_2 = _2;
     res->alt._4.e_3 = _3;
 
+    printf(D("_1=%p,_2=%p,_3=%p ==> ret=%p\n"), _1, _2, _3, res);
     return res;
 } /* new_term_4 */
 
@@ -198,6 +210,7 @@ struct term *new_term_5(
     res->alt._5.e_2 = _2;
     res->alt._5.e_3 = _3;
 
+    printf(D("_1=%p,_2=%p,_3=%p ==> ret=%p\n"), _1, _2, _3, res);
     return res;
 } /* new_term_5 */
 
