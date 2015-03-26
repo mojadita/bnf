@@ -95,25 +95,23 @@ static int nerr = 0;
 
 %}
 
-%token  COLON_COLON_EQ
-%token  COMMENT
+%token  <tokeninfo>                 COLON_COLON_EQ
+%token  <tokeninfo>                 COMMENT
 
-/*
 %type   <grammar>                   grammar
-%type   <rule_list>                 rule_list
 %type   <rule>                      rule
 %type   <alternative_list>          alternative_list
-%type   <alternative>               alternative
 %type   <term_list>                 term_list
 %type   <term>                      term
-*/
 
 %token  <tokeninfo>                 IDENT STRING UNTERMINATED_STRING
+%type   <tokeninfo>                 '[' ']' '{' '}' '(' ')' '.' '|'
 
 %union {
     struct grammar*                 grammar;
     struct rule*                    rule;
-    struct alternative*             alternative;
+    struct alternative_list*        alternative_list;
+    struct term_list*               term_list;
     struct term*                    term;
     struct ti_xref*                 tokeninfo;
 } /* union */
@@ -126,10 +124,12 @@ grammar:
             NT("grammar");
             NT("rule");
             EOL();
+      parsed_grammar = $$ = new_grammar_1($1, $2);
     }
     | rule {
         P("001.02","grammar");
             NT("rule"); EOL();
+      parsed_grammar = $$ = new_grammar_2($1);
     }
     ;
 
@@ -141,6 +141,7 @@ rule:
             NT("alternative_list");
             OP(".");
             EOL();
+        $$ = new_rule_1($1, $2, $3, $4);
         $1->flags |= TI_DEFINED_HERE;
     }
     | error '.' {
@@ -157,11 +158,13 @@ alternative_list:
             OP("|");
             NT("term_list");
             EOL();
+        $$ = new_alternative_list_1($1, $2, $3);
     }
     | term_list {
         P("003.02","alternative_list");
             NT("term_list");
             EOL();
+        $$ = new_alternative_list_2($1);
     }
     ;
 
@@ -171,11 +174,13 @@ term_list:
             NT("term_list");
             NT("term");
             EOL();
+        $$ = new_term_list_1($1, $2);
     }
     | {
         P("004.02","term_list");
             EMPTY();
             EOL();
+        $$ = new_term_list_2();
     }
     ;
 
@@ -184,11 +189,13 @@ term:
         P("005.01","term");
             TE("IDENT");
             EOL();
+        $$ = new_term_1($1);
     }
     | STRING {
         P("005.02","term");
             TE("STRING");
             EOL();
+        $$ = new_term_2($1);
     }
     | '[' alternative_list ']' {
         P("005.03","term");
@@ -196,6 +203,7 @@ term:
             NT("alternative_list");
             OP("]");
             EOL();
+        $$ = new_term_3($1, $2, $3);
     }
     | '{' alternative_list '}' {
         P("005.04","term");
@@ -203,6 +211,7 @@ term:
             NT("alternative_list");
             OP("}");
             EOL();
+        $$ = new_term_4($1, $2, $3);
     }
     | '(' alternative_list ')' {
         P("005.05","term");
@@ -210,6 +219,7 @@ term:
             NT("alternative_list");
             OP(")");
             EOL();
+        $$ = new_term_5($1, $2, $3);
     }
     ;
 
