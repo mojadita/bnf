@@ -9,9 +9,8 @@
 #ifndef BNF_TABSIM_H
 #define BNF_TABSIM_H
 
-#include "avl.h"
+#include <avl.h>
 #include "lists.h"
-
 #include "tokeninfo.h"
 
 static char BNF_SYMTAB_H_RCSId[] = "\n$Id: bnf_symtab.h,v 1.12 2012/09/15 19:57:32 luis Exp $\n";
