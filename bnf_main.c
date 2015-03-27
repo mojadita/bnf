@@ -30,6 +30,7 @@ static char BNF_MAIN_C_CVS_ID[] =
 "\n$Id: bnf_main.c,v 1.24 2012/10/05 11:10:55 luis Exp $\n";
 
 int flags = 0;
+
 char *filename = "stdin";
 char *xml_template_filename = "tmpl_xml.m4";
 char *XML_template_filename = "tmpl_xml.m4";
@@ -50,12 +51,6 @@ char copyright[] =
 int main(int argc, char **argv)
 {
     int opt, res;
-
-    tab_noterminales = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
-    tab_terminales = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
-    token2symbol = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
-    symbol2token = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
-    tab_subtrees = new_avl_tree((AVL_FCOMP)strcmp, NULL, NULL, NULL);
 
     while ((opt = getopt(argc, argv, "vd:ntCm:""x::X::h::c::y::")) != EOF) {
         switch(opt) {

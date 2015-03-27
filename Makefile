@@ -28,6 +28,7 @@ avl.o: avl.h
 bnf_objs = \
 	bnf_pparser.o \
 	bnf_sparser.o \
+	bnf_symtab.o \
 	tokeninfo.o \
 	bnf_main.o \
 	print_symbols.o \

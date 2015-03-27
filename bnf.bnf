@@ -7,7 +7,7 @@
 
 grammar ::= grammar rule | rule. -- list of rules.
 
-rule ::= IDENT '::=' alternative_list ';'. -- fixed syntax
+rule ::= IDENT '::=' alternative_list '.'. -- fixed syntax
 
 alternative_list ::= alternative_list '|' term_list
     | term_list. -- list of alternatives with at least one term_list.
